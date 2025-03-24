@@ -15,7 +15,7 @@ Este sitio está construido con **Next.js**, **React** y **TailwindCSS**, y ofre
 - [Spring Boot](https://spring.io/projects/spring-boot)
 
 ---
-```md
+
 ## 🧑‍💻 Instalación local
 
 Sigue estos pasos para correr el proyecto en modo desarrollo:
