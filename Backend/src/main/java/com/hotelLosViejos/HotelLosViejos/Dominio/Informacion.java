@@ -2,10 +2,7 @@ package com.hotelLosViejos.HotelLosViejos.Dominio;
 
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Informacion.InformacionRegistroDTO;
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Informacion.InformactionActualizacionDTO;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,8 +17,10 @@ public class Informacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(length = 5000)
     private String textoSobreNosotros;
 
+    @Column(length = 5000)
     private String textoBienvenida;
 
     private String nombre;
