@@ -51,7 +51,6 @@ npm run dev
 ```
 
 Abre tu navegador y ve a `http://localhost:3000` (o el puerto que indique la terminal).
-```
 
 ---
 
