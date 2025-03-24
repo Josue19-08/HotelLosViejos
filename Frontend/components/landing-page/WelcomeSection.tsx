@@ -1,5 +1,10 @@
+
+"use client"; 
 import Image from "next/image"
 import { ParallaxSection } from "@/components/ui/parallax-section"
+import { getAllInformation } from "@/lib/Informacion"
+import type { InformacionBase } from "@/types/Informacion"
+import { useEffect } from "react"
 
 interface WelcomeSectionProps {
   content: {
@@ -21,7 +26,26 @@ interface WelcomeSectionProps {
 }
 
 export function WelcomeSection({ content }: WelcomeSectionProps) {
+
   const { title, paragraphs, image } = content
+
+  console.log("Inicio de la aplicación")
+    useEffect(() => {
+    
+        async function fetchData() {
+          try {
+            const data = await getAllInformation()
+            console.log("Información obtenida:", data)
+          } catch (error) {
+            console.error("Error al obtener información:", error)
+          }
+        }
+    
+        fetchData()
+      }, [])
+  // const [informacion, setInformacion] = useState<InformacionBase[] | null>(null)
+
+   // Se ejecuta solo al montar el componente
 
   return (
     <ParallaxSection>
@@ -51,4 +75,3 @@ export function WelcomeSection({ content }: WelcomeSectionProps) {
     </ParallaxSection>
   )
 }
-
