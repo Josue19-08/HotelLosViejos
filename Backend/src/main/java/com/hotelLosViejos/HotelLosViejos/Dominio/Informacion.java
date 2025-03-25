@@ -25,6 +25,7 @@ public class Informacion {
 
     private String nombre;
 
+    @Column(length = 1000)
     private String nombreImagenBienvenida;
 
     public Informacion(InformacionRegistroDTO informacionRegistroDTO) {
