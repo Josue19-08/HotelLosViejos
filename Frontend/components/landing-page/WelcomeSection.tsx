@@ -24,7 +24,7 @@ interface WelcomeSectionProps {
 
 export function WelcomeSection({ content }: WelcomeSectionProps) {
   const { image } = content;
-  const { textoBienvenida, nombre } = useInformacion();
+  const { textoBienvenida, nombre, nombreImagenBienvenida } = useInformacion();
 
   return (
     <ParallaxSection>
@@ -32,7 +32,7 @@ export function WelcomeSection({ content }: WelcomeSectionProps) {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="relative h-[450px] md:h-full overflow-hidden group">
             <Image
-              src={image.src || "/placeholder.svg?height=600&width=800"}
+              src={nombreImagenBienvenida || "/placeholder.svg?height=600&width=800"}
               alt={image.alt}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-110"
