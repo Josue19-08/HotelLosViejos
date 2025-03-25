@@ -1,8 +1,8 @@
 import { FacilityCard } from "@/components/facilities/facility-card"
-import type { Facility } from "@/types"
+import { FacilidadBase } from "@/types/Facilidad"
 
 interface FacilitiesListProps {
-  facilities: Facility[]
+  facilities: FacilidadBase[]
 }
 
 export function FacilitiesList({ facilities }: FacilitiesListProps) {

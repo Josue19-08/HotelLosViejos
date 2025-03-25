@@ -1,15 +1,15 @@
 import Image from "next/image"
-import type { Facility } from "@/types"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { FacilidadBase } from "@/types/Facilidad"
 
 interface FacilityDetailProps {
-  facility: Facility
+  facility: FacilidadBase
 }
 
 export function FacilityDetail({ facility }: FacilityDetailProps) {
-  const { name, description, image } = facility
+  const { titulo, descripcion, nombreImagen } = facility
 
   return (
     <div className="space-y-6">
@@ -26,7 +26,7 @@ export function FacilityDetail({ facility }: FacilityDetailProps) {
         className="text-3xl md:text-4xl font-playfair font-bold text-teal-700 animate-fade-in-up"
         style={{ animationDelay: "0.2s" }}
       >
-        {name}
+        {titulo}
       </h1>
 
       <div
@@ -34,10 +34,11 @@ export function FacilityDetail({ facility }: FacilityDetailProps) {
         style={{ animationDelay: "0.3s" }}
       >
         <Image
-          src={image || "/placeholder.svg?height=400&width=800"}
-          alt={name}
+          src={nombreImagen || "/placeholder.svg?height=400&width=800"}
+          alt={titulo || ""}
           fill
           className="object-cover animate-pulse-subtle"
+          priority 
         />
       </div>
 
@@ -46,7 +47,7 @@ export function FacilityDetail({ facility }: FacilityDetailProps) {
         style={{ animationDelay: "0.4s" }}
       >
         <div className="prose prose-teal max-w-none">
-          <p className="text-gray-700 text-lg">{description}</p>
+          <p className="text-gray-700 text-lg">{descripcion}</p>
         </div>
       </div>
     </div>

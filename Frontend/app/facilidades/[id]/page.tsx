@@ -1,19 +1,22 @@
+"use client";
 import { SiteHeader } from "@/components/layout/site-header"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { Sidebar } from "@/components/layout/sidebar"
 import { FloatingElements } from "@/components/ui/floating-elements"
 import { FacilityDetail } from "@/components/facilities/facility-detail"
-import { facilities } from "@/lib/data"
 import { notFound } from "next/navigation"
+import { useFacilidad } from "@/hooks/use-facilidades"
 
 interface FacilityDetailPageProps {
   params: {
-    id: string
+    id: Number
   }
 }
 
 export default function FacilityDetailPage({ params }: FacilityDetailPageProps) {
-  const facility = facilities.find((f) => f.id === params.id)
+
+  const { facilidades } = useFacilidad();
+  const facility = facilidades.find((f) => f.id === params.id)
 
   if (!facility) {
     notFound()
