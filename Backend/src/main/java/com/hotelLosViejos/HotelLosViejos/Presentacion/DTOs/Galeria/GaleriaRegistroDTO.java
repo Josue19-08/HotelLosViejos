@@ -1,6 +1,5 @@
 package com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Galeria;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 
 public record GaleriaRegistroDTO (

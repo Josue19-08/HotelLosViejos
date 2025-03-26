@@ -5,9 +5,10 @@ import Image from "next/image"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import type { GalleryImage } from "@/types"
+import { GaleriaBase } from "@/types/Galeria"
 
 interface ImageGalleryProps {
-  images: GalleryImage[]
+  images: GaleriaBase[]
 }
 
 export function ImageGallery({ images }: ImageGalleryProps) {
@@ -27,8 +28,8 @@ export function ImageGallery({ images }: ImageGalleryProps) {
         <div className="md:col-span-2 aspect-[4/3] overflow-hidden rounded-lg">
           <div className="relative w-full h-full cursor-pointer" onClick={() => setLightboxOpen(true)}>
             <Image
-              src={images[selectedImageIndex].src || "/placeholder.svg?height=600&width=800"}
-              alt={images[selectedImageIndex].alt}
+              src={images[selectedImageIndex].nombreImagen || "/placeholder.svg?height=600&width=800"}
+              alt={images[selectedImageIndex].descripcion || "Imagen de galería"}
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"
               priority
@@ -52,8 +53,8 @@ export function ImageGallery({ images }: ImageGalleryProps) {
               >
                 <div className="relative w-full h-full">
                   <Image
-                    src={image.src || "/placeholder.svg?height=200&width=200"}
-                    alt={image.alt}
+                    src={image.nombreImagen || "/placeholder.svg?height=200&width=200"}
+                    alt={image.descripcion || "Imagen de galería"}
                     fill
                     className="object-cover"
                   />
@@ -63,7 +64,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
           </div>
 
           <div className="mt-auto">
-            <p className="text-sm text-gray-600 italic">{images[selectedImageIndex].alt}</p>
+            <p className="text-sm text-gray-600 italic">{images[selectedImageIndex].descripcion}</p>
           </div>
         </div>
       </div>
@@ -73,8 +74,8 @@ export function ImageGallery({ images }: ImageGalleryProps) {
         <DialogContent className="max-w-5xl p-0 overflow-hidden bg-transparent border-none">
           <div className="relative w-full" style={{ height: "80vh" }}>
             <Image
-              src={images[selectedImageIndex].src || "/placeholder.svg?height=800&width=1200"}
-              alt={images[selectedImageIndex].alt}
+              src={images[selectedImageIndex].nombreImagen || "/placeholder.svg?height=800&width=1200"}
+              alt={images[selectedImageIndex].descripcion || "Imagen de galería"}
               fill
               className="object-contain"
             />
