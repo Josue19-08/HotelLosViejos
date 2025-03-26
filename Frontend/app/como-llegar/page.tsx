@@ -1,11 +1,17 @@
+"use client";
 import { SiteHeader } from "@/components/layout/site-header"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { Sidebar } from "@/components/layout/sidebar"
 import { LocationMap } from "@/components/location/location-map"
 import { DirectionsInfo } from "@/components/location/directions-info"
 import { locationInfo } from "@/lib/data"
+import { useContacto } from "@/hooks/use-contacto"
 
 export default function ComoLlegarPage() {
+
+    const { direccion } = useContacto();
+  
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       <SiteHeader />
@@ -20,7 +26,7 @@ export default function ComoLlegarPage() {
                 ¿Cómo llegar?
               </h1>
 
-              <DirectionsInfo directions={locationInfo.directions} />
+              <DirectionsInfo direction={direccion || "Dirección no establecida"} />
 
               <div className="animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                 <LocationMap address={locationInfo.address} coordinates={locationInfo.coordinates} />
