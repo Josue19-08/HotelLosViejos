@@ -6,12 +6,13 @@ import { Sidebar } from "@/components/layout/sidebar"
 import { AboutHero } from "@/components/about/about-hero"
 import { AboutContent } from "@/components/about/about-content"
 import { AboutGallery } from "@/components/about/about-gallery"
-import { hotelInfo, galleryImages } from "@/lib/data"
 import { useInformacion } from "@/hooks/use-informacion";
+import { useGaleria } from "@/hooks/use-galeria";
 
 export default function SobreNosotrosPage() {
 
   const { textoSobreNosotros } = useInformacion();
+  const { galerias } = useGaleria();
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -25,7 +26,7 @@ export default function SobreNosotrosPage() {
             <div className="space-y-12">
               <AboutHero title="Sobre Nosotros" />
               <AboutContent content={textoSobreNosotros} />
-              <AboutGallery images={galleryImages} />
+              <AboutGallery images={galerias} />
             </div>
           </div>
         </div>

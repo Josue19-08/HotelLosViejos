@@ -1,8 +1,9 @@
 import { ImageGallery } from "@/components/ui/image-gallery"
 import type { GalleryImage } from "@/types"
+import { GaleriaBase } from "@/types/Galeria"
 
 interface AboutGalleryProps {
-  images: GalleryImage[]
+  images: GaleriaBase[]
 }
 
 export function AboutGallery({ images }: AboutGalleryProps) {
