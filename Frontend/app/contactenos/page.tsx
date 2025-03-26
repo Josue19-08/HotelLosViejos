@@ -1,8 +1,13 @@
+"use client";
 import { SiteHeader } from "@/components/layout/site-header"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { Sidebar } from "@/components/layout/sidebar"
+import { useContacto } from "@/hooks/use-contacto";
 
 export default function ContactenosPage() {
+
+  const { correo, telefono, codigoPostal, direccion } = useContacto();
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       <SiteHeader />
@@ -17,12 +22,12 @@ export default function ContactenosPage() {
 
               <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-md p-6">
                 <div className="space-y-4">
-                  <p className="font-medium text-lg">Hotel Patito:</p>
-                  <p>Tel: 2222-2222 / 2222-2323</p>
-                  <p>Apdo Postal XYZ</p>
+                  <p className="font-medium text-lg">Hotel Los Viejos Resort</p>
+                  <p>Tel: {telefono}</p>
+                  <p>{codigoPostal}</p>
                   <p>
                     <a href="mailto:info@hotelpatito.com" className="text-teal-600 hover:underline">
-                      info@hotelpatito.com
+                      {correo}
                     </a>
                   </p>
                 </div>

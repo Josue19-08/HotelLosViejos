@@ -1,10 +1,10 @@
 import { MapPin } from "lucide-react"
 
 interface DirectionsInfoProps {
-  directions: string[]
+  direction: string
 }
 
-export function DirectionsInfo({ directions }: DirectionsInfoProps) {
+export function DirectionsInfo({ direction: directions }: DirectionsInfoProps) {
   return (
     <div
       className="bg-white/80 backdrop-blur-sm rounded-lg shadow-md p-6 animate-fade-in-up"
@@ -19,11 +19,7 @@ export function DirectionsInfo({ directions }: DirectionsInfoProps) {
       </div>
 
       <div className="space-y-4 text-gray-700">
-        {directions.map((paragraph, index) => (
-          <p key={index} className="leading-relaxed">
-            {paragraph}
-          </p>
-        ))}
+        <p>{directions}</p>
       </div>
     </div>
   )
