@@ -21,10 +21,10 @@ export const useInformacion = () => {
   }, []);
 
   return {
-    id: informacion.id  || 0,
-    textoSobreNosotros: informacion.textoSobreNosotros  || "",
-    textoBienvenida: informacion.textoBienvenida    || "",
-    nombre: informacion.nombre  || "",
-    nombreImagenBienvenida: informacion.nombreImagenBienvenida  || "",
+      id: informacion ? informacion.id : 0,
+      textoSobreNosotros: informacion ? informacion.textoSobreNosotros : "",
+      textoBienvenida: informacion ? informacion.textoBienvenida : "",
+      nombreImagenBienvenida: informacion ? informacion.nombreImagenBienvenida : "",
+      nombre: informacion ? informacion.nombre : "",
   };
 };
