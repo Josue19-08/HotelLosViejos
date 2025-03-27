@@ -18,5 +18,9 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="HotelLosViejos" options="-parameters" />
     </option>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="HotelLosViejos" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -63,7 +63,7 @@ public class FacilidadServicio implements IFacilidad {
             boolean facilidadEncontrada = this.facilidadRepositorio.existsById(idFacilidad);
 
             if(!facilidadEncontrada)
-                throw new Exception("Informacion no encontrada");
+                throw new Exception("Facilidad no encontrada");
 
             this.facilidadRepositorio.deleteById(idFacilidad);
             return true;
