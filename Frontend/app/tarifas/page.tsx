@@ -1,10 +1,14 @@
-import { SiteHeader } from "@/components/layout/site-header"
-import { SiteFooter } from "@/components/layout/site-footer"
-import { Sidebar } from "@/components/layout/sidebar"
-import { RoomTypeCard } from "@/components/rates/room-type-card"
-import { roomTypes } from "@/lib/data"
+"use client";
+
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { Sidebar } from "@/components/layout/sidebar";
+import { RoomTypeCard } from "@/components/rates/room-type-card";
+import { useHabitacion } from "@/hooks/use-habitacion";
 
 export default function TarifasPage() {
+  const habitaciones = useHabitacion();
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       <SiteHeader />
@@ -35,13 +39,16 @@ export default function TarifasPage() {
               </div>
 
               <div className="space-y-8">
-                {roomTypes.map((roomType, index) => (
+                {habitaciones.map((habitacion, index) => (
                   <div
-                    key={roomType.id}
+                    key={habitacion.id}
                     className="opacity-0 animate-fade-in-up"
-                    style={{ animationDelay: `${0.3 + index * 0.2}s`, animationFillMode: "forwards" }}
+                    style={{
+                      animationDelay: `${0.3 + index * 0.2}s`,
+                      animationFillMode: "forwards",
+                    }}
                   >
-                    <RoomTypeCard roomType={roomType} />
+                    <RoomTypeCard habitacion={habitacion} />
                   </div>
                 ))}
               </div>
@@ -66,6 +73,5 @@ export default function TarifasPage() {
 
       <SiteFooter />
     </div>
-  )
+  );
 }
-
