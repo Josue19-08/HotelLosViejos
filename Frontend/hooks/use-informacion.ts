@@ -10,7 +10,6 @@ export const useInformacion = () => {
     async function fetchData() {
       try {
         const datos = await getAllInformation();
-        console.log("Información obtenida:", datos);
         setInformacion(datos[0]);
       } catch (error) {
         console.error("Error al obtener información:", error);
