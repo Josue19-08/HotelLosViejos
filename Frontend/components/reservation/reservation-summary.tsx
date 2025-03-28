@@ -46,7 +46,7 @@ export function ReservationSummary({
             <div className="flex items-center mt-1">
               <div className="relative h-16 w-16 rounded overflow-hidden mr-3">
                 <Image
-                  src={`/images/${selectedRoom.nombreImagen}` || "/placeholder.svg?height=64&width=64"}
+                  src={selectedRoom.nombreImagen || "/placeholder.svg?height=64&width=64"}
                   alt={`Habitación ${selectedRoom.numero}`}
                   fill
                   className="object-cover"

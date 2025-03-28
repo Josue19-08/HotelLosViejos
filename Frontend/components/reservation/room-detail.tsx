@@ -13,6 +13,8 @@ interface RoomDetailProps {
 }
 
 export function RoomDetail({ selectedRoom, totalPrice, nights, checkInDate, checkOutDate }: RoomDetailProps) {
+
+  console.log("selectedRoom", selectedRoom);
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h3 className="text-xl font-bold text-gray-800 mb-4">Habitación Disponible</h3>
@@ -20,7 +22,7 @@ export function RoomDetail({ selectedRoom, totalPrice, nights, checkInDate, chec
       <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
         <div className="relative h-48 w-full">
           <Image
-            src={`/images/${selectedRoom.nombreImagen}` || "/placeholder.svg?height=200&width=300"}
+            src={selectedRoom.nombreImagen || "/placeholder.svg?height=200&width=300"}
             alt={`Habitación ${selectedRoom.numero}`}
             fill
             className="object-cover"

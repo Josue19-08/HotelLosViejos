@@ -9,10 +9,10 @@ import java.util.List;
 public record HabitacionRegistroDTO(
 
         @NotNull(message = "{habitacion.numero.nulo}")
-        @Min(value = 1, message = "{habitacion.numero.minimo}")
+        @Min(value = 1, message = "{habitacion.numero.mayor1}")
         Integer numero,
 
-        @NotNull(message = "{habitacion.tarifaDiariaBase.nula}")
+        @NotNull(message = "{habitacion.tarifaDiariaBase.nulo}")
         Float tarifaDiariaBase,
 
         @NotBlank(message = "{habitacion.nombreImagen.vacio}")
