@@ -47,7 +47,7 @@ public class ReservaControlador {
         Cliente cliente = iCliente.obtenerClientePorId(dto.clienteId());
         Habitacion habitacion = iHabitacion.obtenerHabitacionPorId(dto.habitacionId());
 
-        if (cliente == null || habitacion == null) return ResponseEntity.badRequest().body(false);
+        if (habitacion == null) return ResponseEntity.badRequest().body(false);
 
         Reserva reserva = ReservaMapperDTO.convertirRegistroDTOAReserva(dto, cliente, habitacion);
         return ResponseEntity.created(null).body(iReserva.registrarReserva(reserva));
