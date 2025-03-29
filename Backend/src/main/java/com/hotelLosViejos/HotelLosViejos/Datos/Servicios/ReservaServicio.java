@@ -4,6 +4,7 @@ import com.hotelLosViejos.HotelLosViejos.Datos.Interfaces.IReserva;
 import com.hotelLosViejos.HotelLosViejos.Datos.Repositorios.ReservaRepositorio;
 import com.hotelLosViejos.HotelLosViejos.Dominio.Habitacion;
 import com.hotelLosViejos.HotelLosViejos.Dominio.Reserva;
+import com.hotelLosViejos.HotelLosViejos.Infraestructura.Excepciones.ReservaExcepcion;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,16 +25,13 @@ public class ReservaServicio implements IReserva {
 
     @Override
     public boolean registrarReserva(Reserva reserva) {
-        try {
-            if (!estaDisponible(reserva.getHabitacion(), reserva.getFechaLlegada(), reserva.getFechaSalida())) {
-                return false;
-            }
 
-            this.reservaRepositorio.save(reserva);
-            return true;
-        } catch (Exception e) {
-            return false;
+        if (!estaDisponible(reserva.getHabitacion(), reserva.getFechaLlegada(), reserva.getFechaSalida())) {
+            throw new ReservaExcepcion("Habitacion no disponible");
         }
+
+        this.reservaRepositorio.save(reserva);
+        return true;
     }
 
     @Modifying
@@ -45,7 +43,7 @@ public class ReservaServicio implements IReserva {
                     .orElseThrow(() -> new Exception("Reserva no encontrada"));
 
             if (!estaDisponible(reserva.getHabitacion(), reserva.getFechaLlegada(), reserva.getFechaSalida(), reserva.getId())) {
-                return false;
+                throw new ReservaExcepcion("Habitacion no disponible");
             }
 
             this.reservaRepositorio.save(reserva);

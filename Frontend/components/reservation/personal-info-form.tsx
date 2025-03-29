@@ -4,6 +4,9 @@ import type React from "react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { AlertMessage } from "../alert"
+import { useState } from "react"
+import { se } from 'date-fns/locale';
 
 interface PersonalInfoFormProps {
   firstName: string
@@ -33,8 +36,59 @@ export function PersonalInfoForm({
   onBack,
   isSubmitting,
 }: PersonalInfoFormProps) {
+
+  const [alert, setAlert] = useState<{
+    type: "success" | "error" | "info"
+    title: string
+    message: string
+  } | null>(null)
+
+  const validateForm = () => {
+    // Validaciones
+    if (!firstName || !lastName || !email || !formattedCreditCard) {
+      setAlert({
+        type: "error",
+        title: "Campos incompletos",
+        message: "Por favor, complete todos los campos.",
+      })
+      return false
+    }
+    // Validar el email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setAlert({
+        type: "error",
+        title: "Email inválido",
+        message: "Por favor, ingrese un email válido.",
+      })
+      return false
+    }
+
+    // Validar tarjeta de crédito (mínimo 13 caracteres, máximo 16)
+    if (formattedCreditCard.replace(/\s+/g, "").length < 13 || formattedCreditCard.replace(/\s+/g, "").length > 16) {
+      setAlert({
+        type: "error",
+        title: "Tarjeta de crédito inválida",
+        message: "Por favor, ingrese una tarjeta de crédito válida (debe tener entre 13 y 16 dígitos).",
+      })
+      return false
+    }
+
+    setAlert(null)
+    return true
+  }
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (validateForm()) {
+      onSubmit(e)
+    }
+  }
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={handleFormSubmit} className="space-y-4">
+      {alert && <AlertMessage type={alert.type} title={alert.title} message={alert.message} />}
       <div className="space-y-2">
         <label htmlFor="first-name" className="block text-gray-700">
           Nombre:
@@ -43,7 +97,7 @@ export function PersonalInfoForm({
           id="first-name"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          required
+          
           className="border-gray-200 bg-white"
         />
       </div>
@@ -56,7 +110,7 @@ export function PersonalInfoForm({
           id="last-name"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          required
+          
           className="border-gray-200 bg-white"
         />
       </div>
@@ -70,7 +124,7 @@ export function PersonalInfoForm({
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          
           className="border-gray-200 bg-white"
         />
       </div>
@@ -85,7 +139,7 @@ export function PersonalInfoForm({
           onChange={handleCreditCardChange}
           placeholder="XXXX XXXX XXXX XXXX"
           maxLength={19} // 16 dígitos + 3 espacios
-          required
+          
           className="border-gray-200 bg-white"
         />
       </div>
@@ -121,4 +175,3 @@ export function PersonalInfoForm({
     </form>
   )
 }
-

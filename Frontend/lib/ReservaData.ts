@@ -10,6 +10,10 @@ export async function registrarReservaCompleta(payload: ReservaPayload) {
     body: JSON.stringify(payload)
   })
 
+  if (response.status === 422) {
+    throw new Error("Habitacion no disponible")
+  }
+
   if (!response.ok) {
     throw new Error("Error al registrar la reserva")
   }
