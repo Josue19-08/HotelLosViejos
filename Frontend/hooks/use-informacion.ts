@@ -10,7 +10,6 @@ export const useInformacion = () => {
     async function fetchData() {
       try {
         const datos = await getAllInformation();
-        console.log("Información obtenida:", datos);
         setInformacion(datos[0]);
       } catch (error) {
         console.error("Error al obtener información:", error);
@@ -21,10 +20,10 @@ export const useInformacion = () => {
   }, []);
 
   return {
-    id: informacion.id  || 0,
-    textoSobreNosotros: informacion.textoSobreNosotros  || "",
-    textoBienvenida: informacion.textoBienvenida    || "",
-    nombre: informacion.nombre  || "",
-    nombreImagenBienvenida: informacion.nombreImagenBienvenida  || "",
+      id: informacion ? informacion.id : 0,
+      textoSobreNosotros: informacion ? informacion.textoSobreNosotros : "",
+      textoBienvenida: informacion ? informacion.textoBienvenida : "",
+      nombreImagenBienvenida: informacion ? informacion.nombreImagenBienvenida : "",
+      nombre: informacion ? informacion.nombre : "",
   };
 };

@@ -1,5 +1,7 @@
 "use client";
 import Image from "next/image";
+import React from "react";
+
 import { ParallaxSection } from "@/components/ui/parallax-section";
 import { useInformacion } from "@/hooks/use-informacion";
 
@@ -44,7 +46,16 @@ export function WelcomeSection({ content }: WelcomeSectionProps) {
               Bienvenidos al {nombre}
             </h2>
 
-            <p>{textoBienvenida}</p>
+            {(textoBienvenida || "").split(";").map((texto, index) => (
+              <React.Fragment key={index}>
+                <p>{texto.trim()}</p>
+                <br />
+              </React.Fragment>
+            ))}
+
+
+
+
           </div>
         </div>
       </div>
