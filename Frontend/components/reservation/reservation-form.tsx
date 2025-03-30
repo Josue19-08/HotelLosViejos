@@ -73,6 +73,13 @@ export function ReservationForm() {
           setTotalPrice(room.tarifaDiariaBase * nightsCount);
         }
       }
+
+      const month = new Date().getMonth() + 1;
+
+      if ([4, 7, 8, 12].includes(month)) { // Temporadas alta
+        setTotalPrice((prev) => prev * 1.2); 
+      }
+
     } else {
       setNights(0);
       setTotalPrice(0);
@@ -109,7 +116,7 @@ export function ReservationForm() {
 
   const handleSecondStep = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // Validar que se hayan completado todos los campos
     if (!firstName || !lastName || !email || !creditCard) {
       setAlert({
@@ -119,7 +126,7 @@ export function ReservationForm() {
       });
       return;
     }
-  
+
     // Validar formato de email básico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -130,7 +137,7 @@ export function ReservationForm() {
       });
       return;
     }
-  
+
     // Validar que la tarjeta tenga al menos 13 dígitos (estándar mínimo)
     if (creditCard.length < 13) {
       setAlert({
@@ -140,9 +147,9 @@ export function ReservationForm() {
       });
       return;
     }
-  
+
     setIsSubmitting(true);
-  
+
     try {
       if (selectedRoom && checkInDate && checkOutDate) {
         // Realizar la reserva real
@@ -155,10 +162,10 @@ export function ReservationForm() {
           checkInDate,
           checkOutDate
         );
-  
+
         // ✅ Si la reserva es exitosa, se limpia la alerta antes de continuar
         setAlert(null);
-  
+
         // Generar un número de reserva aleatorio
         const generatedNumber =
           Math.random().toString(36).substring(2, 10).toUpperCase() +
@@ -166,30 +173,30 @@ export function ReservationForm() {
             .toString()
             .padStart(6, "0");
         setReservationNumber(generatedNumber);
-  
+
         setFormSubmitted(true);
       }
     } catch (error: any) {
-
       // Verificar el código de error y configurar el mensaje
       if (error.message.includes("Habitacion no disponible")) {
         setAlert({
           type: "error",
           title: "Error",
-          message: "Ya existe una reserva con esos datos. Por favor seleccione otras fechas.",
+          message:
+            "Ya existe una reserva con esos datos. Por favor seleccione otras fechas.",
         });
       } else {
         setAlert({
           type: "error",
           title: "Error",
-          message: "Ocurrió un error al procesar su reserva. Por favor intente nuevamente.",
+          message:
+            "Ocurrió un error al procesar su reserva. Por favor intente nuevamente.",
         });
       }
     } finally {
       setIsSubmitting(false);
     }
   };
-  
 
   const goBack = () => {
     setStep(1);

@@ -21,4 +21,5 @@ public interface IReserva {
     boolean estaDisponible(Habitacion habitacion, LocalDateTime llegada, LocalDateTime salida);
 
     boolean estaDisponible(Habitacion habitacion, LocalDateTime llegada, LocalDateTime salida, int idActual);
+
 }
