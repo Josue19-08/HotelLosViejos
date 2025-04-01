@@ -4,7 +4,7 @@ import { getContact } from "@/lib/ContactoData";
 import { ContactoBase } from "@/types/Contacto";
 
 export const useContacto = () => {
-  const [contacto, setContacto] = useState<ContactoBase>({});
+  const [contacto, setContacto] = useState<ContactoBase | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -18,6 +18,8 @@ export const useContacto = () => {
 
     fetchData();
   }, []);
+
+  if (!contacto) return null;
 
   return {
     id: contacto.id,
