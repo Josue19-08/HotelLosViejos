@@ -17,6 +17,28 @@ export function SiteFooter() {
             <Link href="/terminos-condiciones" className="text-sm hover:underline">
               Términos y Condiciones
             </Link>
+            <Link
+              href="/admin"
+              className="text-sm font-medium text-teal-700 hover:underline flex items-center gap-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              Administración
+            </Link>
           </div>
         </div>
       </div>
@@ -27,4 +49,3 @@ export function SiteFooter() {
     </footer>
   )
 }
-

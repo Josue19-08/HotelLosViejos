@@ -8,9 +8,10 @@ import { locationInfo } from "@/lib/data"
 import { useContacto } from "@/hooks/use-contacto"
 
 export default function ComoLlegarPage() {
+  const contacto = useContacto();
 
-    const { direccion } = useContacto();
-  
+  // 👇 esto asegura que no se rompa si aún no hay datos
+  const direccion = contacto?.direccion ?? "Dirección no establecida";
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -26,10 +27,13 @@ export default function ComoLlegarPage() {
                 ¿Cómo llegar?
               </h1>
 
-              <DirectionsInfo direction={direccion || "Dirección no establecida"} />
+              <DirectionsInfo direction={direccion} />
 
               <div className="animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-                <LocationMap address={locationInfo.address} coordinates={locationInfo.coordinates} />
+                <LocationMap
+                  address={locationInfo.address}
+                  coordinates={locationInfo.coordinates}
+                />
               </div>
             </div>
           </div>
@@ -38,6 +42,7 @@ export default function ComoLlegarPage() {
 
       <SiteFooter />
     </div>
-  )
+  );
 }
+
 
