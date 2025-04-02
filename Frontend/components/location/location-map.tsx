@@ -3,14 +3,13 @@
 import { useState, useEffect } from "react"
 
 interface LocationMapProps {
-  address: string
-  coordinates: {
-    lat: number
-    lng: number
-  }
+  address: string,
+  lat: number,
+  lng: number
+
 }
 
-export function LocationMap({ address, coordinates }: LocationMapProps) {
+export function LocationMap({ address, lat, lng }: LocationMapProps) {
   const [isMapLoaded, setIsMapLoaded] = useState(false)
   const [isLeafletLoaded, setIsLeafletLoaded] = useState(false)
 
@@ -53,7 +52,7 @@ export function LocationMap({ address, coordinates }: LocationMapProps) {
     mapContainer.innerHTML = ""
 
     // Crear el mapa
-    const map = window.L.map("map-container").setView([coordinates.lat, coordinates.lng], 15)
+    const map = window.L.map("map-container").setView([Number(lat), Number(lng)], 15)
 
     // Añadir capa de OpenStreetMap
     window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -61,7 +60,7 @@ export function LocationMap({ address, coordinates }: LocationMapProps) {
     }).addTo(map)
 
     // Añadir marcador
-    const marker = window.L.marker([coordinates.lat, coordinates.lng]).addTo(map)
+    const marker = window.L.marker([lat, lng]).addTo(map)
     marker.bindPopup(`<b>Hotel Los Viejos</b><br>${address}`).openPopup()
 
     setIsMapLoaded(true)
@@ -70,10 +69,10 @@ export function LocationMap({ address, coordinates }: LocationMapProps) {
     return () => {
       map.remove()
     }
-  }, [isLeafletLoaded, coordinates, address])
+  }, [isLeafletLoaded, lat, lng, address])
 
   const openGoogleMaps = () => {
-    const url = `https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}`
+    const url = `https://www.google.com/maps?q=${lat},${lng}`
     window.open(url, "_blank")
   }
 
@@ -96,7 +95,7 @@ export function LocationMap({ address, coordinates }: LocationMapProps) {
 
       <div className="p-4 flex justify-between items-center">
         <p className="text-sm text-gray-500">
-          Coordenadas: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+          Coordenadas: {Number(lat).toFixed(6)}, {Number(lat).toFixed(6)}
         </p>
         <button
           onClick={openGoogleMaps}

@@ -10,7 +10,7 @@ export const useContacto = () => {
     async function fetchData() {
       try {
         const contactos = await getContact();
-        setContacto(contactos[0]);
+        setContacto(contactos[0] || null);
       } catch (error) {
         console.error("Error al obtener contactos:", error);
       }
@@ -19,13 +19,13 @@ export const useContacto = () => {
     fetchData();
   }, []);
 
-  if (!contacto) return null;
-
-  return {
-    id: contacto.id,
-    correo: contacto.correo,
-    telefono: contacto.telefono,
-    codigoPostal: contacto.codigoPostal,
-    direccion: contacto.direccion,
+  return contacto ?? {
+    id: 0,
+    correo: "",
+    telefono: "",
+    codigoPostal: "",
+    direccion: "",
+    latitud: "",
+    longitud: "",
   };
 };
