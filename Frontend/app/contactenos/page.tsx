@@ -5,8 +5,13 @@ import { Sidebar } from "@/components/layout/sidebar"
 import { useContacto } from "@/hooks/use-contacto";
 
 export default function ContactenosPage() {
+  const contacto = useContacto();
 
-  const { correo, telefono, codigoPostal, direccion } = useContacto();
+  if (!contacto) {
+    return <p className="text-center">Cargando datos...</p>;
+  }
+
+  const { correo, telefono, codigoPostal } = contacto;
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -26,7 +31,7 @@ export default function ContactenosPage() {
                   <p>Tel: {telefono}</p>
                   <p>{codigoPostal}</p>
                   <p>
-                    <a href="mailto:info@hotelpatito.com" className="text-teal-600 hover:underline">
+                    <a href={`mailto:${correo}`} className="text-teal-600 hover:underline">
                       {correo}
                     </a>
                   </p>
@@ -39,6 +44,7 @@ export default function ContactenosPage() {
 
       <SiteFooter />
     </div>
-  )
+  );
 }
+
 

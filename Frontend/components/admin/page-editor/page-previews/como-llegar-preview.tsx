@@ -1,6 +1,7 @@
 "use client"
 
 import { LocationMap } from "@/components/location/location-map"
+import { useContacto } from "@/hooks/use-contacto"
 
 interface ComoLlegarData {
   direccion: string
@@ -19,9 +20,8 @@ interface ComoLlegarPreviewProps {
 }
 
 export function ComoLlegarPreview({ data }: ComoLlegarPreviewProps) {
-  const lat = parseFloat(data.coordenadas.latitud || "0")
-  const lng = parseFloat(data.coordenadas.longitud || "0")
-  const coordenadasValidas = lat !== 0 && lng !== 0
+  const contacto = useContacto();
+  const coordenadasValidas = Number(contacto.latitud) !== 0 && Number(contacto.longitud) !== 0;
 
   return (
     <div className="bg-white border rounded-md overflow-hidden">
@@ -47,11 +47,11 @@ export function ComoLlegarPreview({ data }: ComoLlegarPreviewProps) {
               Cómo encontrarnos
             </h2>
 
-            <p className="text-gray-700">{data.direccion || "Dirección no establecida"}</p>
+            <p className="text-gray-700">{contacto.direccion || "Dirección no establecida"}</p>
 
-            {(data.telefono || data.correo || data.codigoPostal) && (
+            {(contacto.telefono || contacto.correo || contacto.codigoPostal) && (
               <div className="mt-4 space-y-2">
-                {data.telefono && (
+                {contacto.telefono && (
                   <p className="text-gray-700 flex items-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -67,11 +67,11 @@ export function ComoLlegarPreview({ data }: ComoLlegarPreviewProps) {
                     >
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                     </svg>
-                    {data.telefono}
+                    {contacto.telefono}
                   </p>
                 )}
 
-                {data.correo && (
+                {contacto.correo && (
                   <p className="text-gray-700 flex items-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -88,11 +88,11 @@ export function ComoLlegarPreview({ data }: ComoLlegarPreviewProps) {
                       <rect width="20" height="16" x="2" y="4" rx="2"></rect>
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                     </svg>
-                    {data.correo}
+                    {contacto.correo}
                   </p>
                 )}
 
-                {data.codigoPostal && (
+                {contacto.codigoPostal && (
                   <p className="text-gray-700 flex items-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +115,7 @@ export function ComoLlegarPreview({ data }: ComoLlegarPreviewProps) {
                       <path d="M15 4h2a3 3 0 0 1 3 3v2"></path>
                       <path d="M9 4H7a3 3 0 0 0-3 3v2"></path>
                     </svg>
-                    Código Postal: {data.codigoPostal}
+                    Código Postal: {contacto.codigoPostal}
                   </p>
                 )}
               </div>
@@ -124,8 +124,9 @@ export function ComoLlegarPreview({ data }: ComoLlegarPreviewProps) {
 
           {coordenadasValidas && (
             <LocationMap
-              address={data.direccion || "Ubicación no establecida"}
-              coordinates={{ lat, lng }}
+              address={contacto.direccion || "Ubicación no establecida"}
+              lat= {Number(contacto.latitud) || 0}
+              lng= {Number(contacto.longitud) || 0}
             />
           )}
 

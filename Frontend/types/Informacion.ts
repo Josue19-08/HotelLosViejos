@@ -8,3 +8,6 @@ export interface InformacionBase {
 
 export interface InformacionRegistro extends Omit<InformacionBase, "id"> {}
 
+export interface InformacionActualizacion extends Omit<InformacionBase, "id"> {}
+
+

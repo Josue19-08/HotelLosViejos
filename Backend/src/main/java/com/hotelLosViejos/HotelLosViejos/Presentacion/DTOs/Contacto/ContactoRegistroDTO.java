@@ -17,7 +17,13 @@ public record ContactoRegistroDTO (
          String codigoPostal,
 
          @NotBlank(message = "{contacto.direccion.vacio}")
-         String direccion
+         String direccion,
+
+         @NotBlank(message = "{contacto.latitud.vacio}")
+         String latitud,
+
+         @NotBlank(message = "{contacto.longitud.vacio}")
+         String longitud
 
 ){
 }

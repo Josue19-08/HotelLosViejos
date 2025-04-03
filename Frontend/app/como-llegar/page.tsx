@@ -6,13 +6,11 @@ import { LocationMap } from "@/components/location/location-map"
 import { DirectionsInfo } from "@/components/location/directions-info"
 import { locationInfo } from "@/lib/data"
 import { useContacto } from "@/hooks/use-contacto"
+import { use } from "react";
 
 export default function ComoLlegarPage() {
-  const contacto = useContacto();
-
-  // 👇 esto asegura que no se rompa si aún no hay datos
-  const direccion = contacto?.direccion ?? "Dirección no establecida";
-
+ 
+  const { direccion, latitud, longitud } = useContacto();
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       <SiteHeader />
@@ -27,12 +25,13 @@ export default function ComoLlegarPage() {
                 ¿Cómo llegar?
               </h1>
 
-              <DirectionsInfo direction={direccion} />
+              <DirectionsInfo direction={direccion || ""} />
 
               <div className="animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                 <LocationMap
                   address={locationInfo.address}
-                  coordinates={locationInfo.coordinates}
+                  lat={Number(latitud) || 0}
+                  lng={Number(longitud) || 0}
                 />
               </div>
             </div>

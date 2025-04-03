@@ -15,11 +15,11 @@ interface ImageEditorProps {
 }
 
 export function ImageEditor({ label = "Imagen", currentImageUrl, onImageChange, compact = false }: ImageEditorProps) {
-  const [newImageUrl, setNewImageUrl] = useState("")
+  const [newImageUrl, setNewImageUrl] = useState("");
   const [previewImageUrl, setPreviewImageUrl] = useState("")
 
   useEffect(() => {
-    setPreviewImageUrl(currentImageUrl)
+    setPreviewImageUrl(currentImageUrl);
   }, [currentImageUrl])
 
   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {

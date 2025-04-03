@@ -12,12 +12,17 @@ public record ContactoLecturaDTO(
 
         String codigoPostal,
 
-        String direccion
+        String direccion,
+
+        String latitud,
+
+        String longitud
 ) {
 
     public ContactoLecturaDTO(Contacto contacto){
         this(contacto.getId(), contacto.getCorreo(), contacto.getTelefono(),
-                contacto.getCodigoPostal(), contacto.getDireccion());
+                contacto.getCodigoPostal(), contacto.getDireccion(), contacto.getLatitud(),
+                contacto.getLongitud());
     }
 
 }
