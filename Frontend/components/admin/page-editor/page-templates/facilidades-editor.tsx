@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { ImageEditor } from "../image-editor"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
+import { useFacilidad } from "@/hooks/use-facilidades"
+import { FacilidadBase } from "@/types/Facilidad"
 
 interface Facilidad {
   id: string
@@ -24,15 +26,17 @@ interface FacilidadesEditorProps {
 }
 
 export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorProps) {
-  const [data, setData] = useState<FacilidadesData>(initialData)
+
+  const {facilidades} = useFacilidad();
+
+  const [data, setData] = useState<FacilidadBase[]>(facilidades);
 
   const handleFacilidadChange = (index: number, field: keyof Facilidad, value: string) => {
-    const newFacilidades = [...data.facilidades]
+    const newFacilidades = [...data]
     newFacilidades[index] = { ...newFacilidades[index], [field]: value }
 
     const newData = { ...data, facilidades: newFacilidades }
     setData(newData)
-    onChange(newData)
   }
 
   const handleAddFacilidad = () => {
@@ -45,36 +49,33 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
 
     const newData = {
       ...data,
-      facilidades: [...data.facilidades, newFacilidad],
+      facilidades: [...facilidades, newFacilidad],
     }
 
     setData(newData)
-    onChange(newData)
   }
 
   const handleRemoveFacilidad = (index: number) => {
-    const newFacilidades = [...data.facilidades]
+    const newFacilidades = [...facilidades]
     newFacilidades.splice(index, 1)
 
     const newData = { ...data, facilidades: newFacilidades }
     setData(newData)
-    onChange(newData)
   }
 
   const moveFacilidad = (index: number, direction: "up" | "down") => {
-    if ((direction === "up" && index === 0) || (direction === "down" && index === data.facilidades.length - 1)) {
+    if ((direction === "up" && index === 0) || (direction === "down" && index === facilidades.length - 1)) {
       return
     }
 
     const newIndex = direction === "up" ? index - 1 : index + 1
-    const newFacilidades = [...data.facilidades]
+    const newFacilidades = [...facilidades]
     const temp = newFacilidades[index]
     newFacilidades[index] = newFacilidades[newIndex]
     newFacilidades[newIndex] = temp
 
     const newData = { ...data, facilidades: newFacilidades }
     setData(newData)
-    onChange(newData)
   }
 
   return (
@@ -93,7 +94,7 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
         </Button>
       </div>
 
-      {data.facilidades.length === 0 ? (
+      {facilidades.length === 0 ? (
         <div className="text-center py-8 border rounded-md bg-gray-50">
           <p className="text-gray-500">No hay facilidades agregadas</p>
           <Button
@@ -109,7 +110,7 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
         </div>
       ) : (
         <div className="space-y-6">
-          {data.facilidades.map((facilidad, index) => (
+          {facilidades.map((facilidad, index) => (
             <div key={facilidad.id} className="border rounded-md p-4 relative">
               <div className="absolute top-2 right-2 flex space-x-1">
                 <Button
@@ -128,7 +129,7 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
                   size="icon"
                   className="h-7 w-7 text-gray-500 hover:text-blue-500"
                   onClick={() => moveFacilidad(index, "down")}
-                  disabled={index === data.facilidades.length - 1}
+                  disabled={index === facilidades.length - 1}
                 >
                   <MoveDown size={16} />
                 </Button>
@@ -147,7 +148,7 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la facilidad</label>
                   <Input
-                    value={facilidad.nombre}
+                    value={facilidad.titulo}
                     onChange={(e) => handleFacilidadChange(index, "nombre", e.target.value)}
                     className="w-full"
                     placeholder="Ej: Piscina Infinita, Restaurante, Spa..."
@@ -170,15 +171,15 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="border rounded-md overflow-hidden bg-gray-50 flex items-center justify-center h-[200px]">
                       <img
-                        src={facilidad.imagen || "/placeholder.svg"}
-                        alt={facilidad.nombre}
+                        src={facilidad.nombreImagen || "/placeholder.svg"}
+                        alt={facilidad.titulo}
                         className="max-w-full max-h-full object-cover"
                       />
                     </div>
                     <div>
                       <ImageEditor
                         compact
-                        currentImageUrl={facilidad.imagen}
+                        currentImageUrl={facilidad.nombreImagen || "/placeholder.svg"}
                         onImageChange={(url) => handleFacilidadChange(index, "imagen", url)}
                       />
                     </div>
