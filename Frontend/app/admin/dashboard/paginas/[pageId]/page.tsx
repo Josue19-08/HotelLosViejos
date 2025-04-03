@@ -186,13 +186,13 @@ export default function EditarPaginaPage() {
   const renderEditor = () => {
     switch (pageId) {
       case "home":
-        return <HomeEditor initialData={formData} onChange={handleFormChange} />
+        return <HomeEditor/>
       case "sobre-nosotros":
-        return <SobreNosotrosEditor initialData={formData} onChange={handleFormChange} />
+        return <SobreNosotrosEditor/>
       case "facilidades":
         return <FacilidadesEditor initialData={formData} onChange={handleFormChange} />
       case "como-llegar":
-        return <ComoLlegarEditor initialData={formData} onChange={handleFormChange} />
+        return <ComoLlegarEditor/>
       default:
         return <div>Editor no disponible</div>
     }

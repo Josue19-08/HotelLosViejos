@@ -10,33 +10,11 @@ import { useContacto } from "@/hooks/use-contacto";
 import { Textarea } from "@/components/ui/textarea";
 import { updateContact } from "@/lib/ContactoData";
 import { ContactoBase } from "@/types/Contacto";
-import { da, se, tr } from "date-fns/locale";
 
-interface ComoLlegarData {
-  titulo: string;
-  descripcion: string;
-  direccion: string;
-  correo: string;
-  telefono: string;
-  codigoPostal: string;
-  coordenadas: {
-    latitud: string;
-    longitud: string;
-  };
-  instrucciones: string;
-}
-
-interface ComoLlegarEditorProps {
-  initialData: ComoLlegarData;
-  onChange: (data: ComoLlegarData) => void;
-}
-
-export function ComoLlegarEditor({
-  initialData,
-  onChange,
-}: ComoLlegarEditorProps) {
+export function ComoLlegarEditor() {
 
   const contacto = useContacto();
+
 
   const [data, setData] = useState<ContactoBase>({
     id: contacto.id,
@@ -118,6 +96,7 @@ export function ComoLlegarEditor({
               onChange={handleChange}
               className="w-full"
               placeholder="Ej: San Francisco de Coyote, Guanacaste, Costa Rica"
+              rows={10}
             />
           </div>
 
@@ -238,7 +217,7 @@ export function ComoLlegarEditor({
           
           onClick={handleSave}
           className="bg-teal-600 hover:bg-teal-700 flex items-center gap-2"
-          disabled={isSaving ||}
+          disabled={isSaving}
         >
           {isSaving ? (
             <>
