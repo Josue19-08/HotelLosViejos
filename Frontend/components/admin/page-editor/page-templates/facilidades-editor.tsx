@@ -1,54 +1,87 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageEditor } from "../image-editor"
+import { FacilidadBase, FacilidadActualizacion, FacilidadRegistro } from "@/types/Facilidad"
+import { useFacilidad } from "@/hooks/use-facilidades"
+import { Save, Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
-
-interface Facilidad {
-  id: string
-  nombre: string
-  descripcion: string
-  imagen: string
-}
-
+import { updateFacilities, registerFacilities } from "@/lib/FacilidadData"
+import { v4 as uuidv4 } from "uuid";
 interface FacilidadesData {
-  facilidades: Facilidad[]
+  facilidades: FacilidadBase[]
 }
 
-interface FacilidadesEditorProps {
-  initialData: FacilidadesData
-  onChange: (data: FacilidadesData) => void
-}
+export function FacilidadesEditor({ onChange }: { onChange?: (data: FacilidadesData) => void }) {
 
-export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorProps) {
-  const [data, setData] = useState<FacilidadesData>(initialData)
+  const { facilidades } = useFacilidad();
+  const [data, setData] = useState<FacilidadesData>({ facilidades: [] })
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleFacilidadChange = (index: number, field: keyof Facilidad, value: string) => {
+    useEffect(() => {
+        // Asegúrate de que 'facilidades' no sea undefined o vacío antes de actualizar el estado
+        if (facilidades && facilidades.length > 0 && data.facilidades.length === 0) {
+          setData({ facilidades });
+        }
+    }, [facilidades]);
+
+const handleSave = async (index: number) => {
+  setIsSaving(true);
+  const facilidad = data.facilidades[index];
+
+  try {
+    // Si no tiene `id`, es una facilidad nueva
+    if (!facilidad.id) {
+      const newFacilidad = { ...facilidad };
+      delete newFacilidad._uuid; // No enviar _uuid al backend
+      const result = await registerFacilities(newFacilidad);
+
+      alert("Facilidad registrada con éxito");
+    } else {
+      // Tiene un ID real de base de datos => actualizar
+      await updateFacilities(facilidad);
+      alert("Cambios guardados con éxito");
+    }
+  } catch (error) {
+    console.error("Error al guardar cambios:", error);
+    alert("Error al guardar cambios");
+  }
+
+  setIsSaving(false);
+  window.location.reload();
+};
+
+
+
+
+
+const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value: string) => {
     const newFacilidades = [...data.facilidades]
     newFacilidades[index] = { ...newFacilidades[index], [field]: value }
 
-    const newData = { ...data, facilidades: newFacilidades }
+    const newData = { facilidades: newFacilidades }
     setData(newData)
-    onChange(newData)
   }
 
-  const handleAddFacilidad = () => {
-    const newFacilidad: Facilidad = {
-      id: Date.now().toString(),
-      nombre: "",
-      descripcion: "",
-      imagen: "/placeholder.svg?height=300&width=400",
-    }
+    const handleAddFacilidad = () => {
+      const newFacilidad: Facilidad = {
+        _uuid: uuidv4(),
+        titulo: "",
+        descripcion: "",
+        nombreImagen: "/placeholder.svg?height=300&width=400",
+      };
 
     const newData = {
-      ...data,
-      facilidades: [...data.facilidades, newFacilidad],
-    }
+          ...data,
+          facilidades: [...data.facilidades, newFacilidad],
+        };
 
-    setData(newData)
+    setData((prev) => ({
+        ...prev,
+        facilidades: [...prev.facilidades, newFacilidad],
+      }));
     onChange(newData)
   }
 
@@ -110,7 +143,7 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
       ) : (
         <div className="space-y-6">
           {data.facilidades.map((facilidad, index) => (
-            <div key={facilidad.id} className="border rounded-md p-4 relative">
+            <div key={facilidad.id || facilidad._uuid} className="border rounded-md p-4 relative">
               <div className="absolute top-2 right-2 flex space-x-1">
                 <Button
                   type="button"
@@ -147,8 +180,8 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la facilidad</label>
                   <Input
-                    value={facilidad.nombre}
-                    onChange={(e) => handleFacilidadChange(index, "nombre", e.target.value)}
+                    value={facilidad.titulo}
+                    onChange={(e) => handleFacilidadChange(index, "titulo", e.target.value)}
                     className="w-full"
                     placeholder="Ej: Piscina Infinita, Restaurante, Spa..."
                   />
@@ -170,20 +203,24 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="border rounded-md overflow-hidden bg-gray-50 flex items-center justify-center h-[200px]">
                       <img
-                        src={facilidad.imagen || "/placeholder.svg"}
-                        alt={facilidad.nombre}
+                        src={facilidad.nombreImagen || "/placeholder.svg"}
+                        alt={facilidad.titulo}
                         className="max-w-full max-h-full object-cover"
                       />
                     </div>
                     <div>
                       <ImageEditor
                         compact
-                        currentImageUrl={facilidad.imagen}
-                        onImageChange={(url) => handleFacilidadChange(index, "imagen", url)}
+                        currentImageUrl={facilidad.nombreImagen}
+                        onImageChange={(url) => handleFacilidadChange(index, "imagen", facilidad.nombreImagen)}
                       />
                     </div>
                   </div>
                 </div>
+                     <Button onClick={() => handleSave(index)} disabled={isSaving}>
+                       Guardar cambios
+                     </Button>
+
               </div>
             </div>
           ))}
