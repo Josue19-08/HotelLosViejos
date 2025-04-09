@@ -21,5 +21,5 @@ export const useFacilidad = () => {
         fetchData();
     }, []);
 
-    return { facilidades};
+    return { facilidades };
 }
