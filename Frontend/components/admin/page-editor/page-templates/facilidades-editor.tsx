@@ -212,7 +212,7 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
                       <ImageEditor
                         compact
                         currentImageUrl={facilidad.nombreImagen}
-                        onImageChange={(url) => handleFacilidadChange(index, "imagen", facilidad.nombreImagen)}
+                        onImageChange={(url) => handleFacilidadChange(index, "nombreImagen", url)}
                       />
                     </div>
                   </div>
