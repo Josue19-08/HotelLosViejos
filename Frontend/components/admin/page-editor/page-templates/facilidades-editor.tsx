@@ -1,10 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageEditor } from "../image-editor"
+import { FacilidadBase, FacilidadActualizacion, FacilidadRegistro } from "@/types/Facilidad"
+import { useFacilidad } from "@/hooks/use-facilidades"
+import { Save, Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { updateFacilities, registerFacilities } from "@/lib/FacilidadData"
+import { v4 as uuidv4 } from "uuid";
+
 import { Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
 import { useFacilidad } from "@/hooks/use-facilidades"
 import { FacilidadBase } from "@/types/Facilidad"
@@ -17,13 +23,54 @@ interface Facilidad {
 }
 
 interface FacilidadesData {
-  facilidades: Facilidad[]
+  facilidades: FacilidadBase[]
 }
 
-interface FacilidadesEditorProps {
-  initialData: FacilidadesData
-  onChange: (data: FacilidadesData) => void
-}
+export function FacilidadesEditor({ onChange }: { onChange?: (data: FacilidadesData) => void }) {
+
+  const { facilidades } = useFacilidad();
+  const [data, setData] = useState<FacilidadesData>({ facilidades: [] })
+  const [isSaving, setIsSaving] = useState(false)
+
+    useEffect(() => {
+        // Asegúrate de que 'facilidades' no sea undefined o vacío antes de actualizar el estado
+        if (facilidades && facilidades.length > 0 && data.facilidades.length === 0) {
+          setData({ facilidades });
+        }
+    }, [facilidades]);
+
+const handleSave = async (index: number) => {
+  setIsSaving(true);
+  const facilidad = data.facilidades[index];
+
+  try {
+    // Si no tiene `id`, es una facilidad nueva
+    if (!facilidad.id) {
+      const newFacilidad = { ...facilidad };
+      delete newFacilidad._uuid; // No enviar _uuid al backend
+      const result = await registerFacilities(newFacilidad);
+
+      alert("Facilidad registrada con éxito");
+    } else {
+      // Tiene un ID real de base de datos => actualizar
+      await updateFacilities(facilidad);
+      alert("Cambios guardados con éxito");
+    }
+  } catch (error) {
+    console.error("Error al guardar cambios:", error);
+    alert("Error al guardar cambios");
+  }
+
+  setIsSaving(false);
+  window.location.reload();
+};
+
+
+
+
+
+const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value: string) => {
+    const newFacilidades = [...data.facilidades]
 
 export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorProps) {
 
@@ -33,26 +80,39 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
 
   const handleFacilidadChange = (index: number, field: keyof Facilidad, value: string) => {
     const newFacilidades = [...data]
+
     newFacilidades[index] = { ...newFacilidades[index], [field]: value }
 
-    const newData = { ...data, facilidades: newFacilidades }
+    const newData = { facilidades: newFacilidades }
     setData(newData)
   }
 
-  const handleAddFacilidad = () => {
-    const newFacilidad: Facilidad = {
-      id: Date.now().toString(),
-      nombre: "",
-      descripcion: "",
-      imagen: "/placeholder.svg?height=300&width=400",
-    }
+    const handleAddFacilidad = () => {
+      const newFacilidad: Facilidad = {
+        _uuid: uuidv4(),
+        titulo: "",
+        descripcion: "",
+        nombreImagen: "/placeholder.svg?height=300&width=400",
+      };
 
     const newData = {
+
+          ...data,
+          facilidades: [...data.facilidades, newFacilidad],
+        };
+
+    setData((prev) => ({
+        ...prev,
+        facilidades: [...prev.facilidades, newFacilidad],
+      }));
+    onChange(newData)
+
       ...data,
       facilidades: [...facilidades, newFacilidad],
     }
 
     setData(newData)
+
   }
 
   const handleRemoveFacilidad = (index: number) => {
@@ -110,8 +170,13 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
         </div>
       ) : (
         <div className="space-y-6">
+
+          {data.facilidades.map((facilidad, index) => (
+            <div key={facilidad.id || facilidad._uuid} className="border rounded-md p-4 relative">
+
           {facilidades.map((facilidad, index) => (
             <div key={facilidad.id} className="border rounded-md p-4 relative">
+
               <div className="absolute top-2 right-2 flex space-x-1">
                 <Button
                   type="button"
@@ -149,7 +214,11 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la facilidad</label>
                   <Input
                     value={facilidad.titulo}
+
+                    onChange={(e) => handleFacilidadChange(index, "titulo", e.target.value)}
+
                     onChange={(e) => handleFacilidadChange(index, "nombre", e.target.value)}
+
                     className="w-full"
                     placeholder="Ej: Piscina Infinita, Restaurante, Spa..."
                   />
@@ -179,12 +248,21 @@ export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorPr
                     <div>
                       <ImageEditor
                         compact
+
+                        currentImageUrl={facilidad.nombreImagen}
+                        onImageChange={(url) => handleFacilidadChange(index, "nombreImagen", url)}
+
                         currentImageUrl={facilidad.nombreImagen || "/placeholder.svg"}
                         onImageChange={(url) => handleFacilidadChange(index, "imagen", url)}
+
                       />
                     </div>
                   </div>
                 </div>
+                     <Button onClick={() => handleSave(index)} disabled={isSaving}>
+                       Guardar cambios
+                     </Button>
+
               </div>
             </div>
           ))}
