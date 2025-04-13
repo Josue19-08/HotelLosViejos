@@ -10,6 +10,18 @@ import { Save, Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { updateFacilities, registerFacilities } from "@/lib/FacilidadData"
 import { v4 as uuidv4 } from "uuid";
+
+import { Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
+import { useFacilidad } from "@/hooks/use-facilidades"
+import { FacilidadBase } from "@/types/Facilidad"
+
+interface Facilidad {
+  id: string
+  nombre: string
+  descripcion: string
+  imagen: string
+}
+
 interface FacilidadesData {
   facilidades: FacilidadBase[]
 }
@@ -59,6 +71,16 @@ const handleSave = async (index: number) => {
 
 const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value: string) => {
     const newFacilidades = [...data.facilidades]
+
+export function FacilidadesEditor({ initialData, onChange }: FacilidadesEditorProps) {
+
+  const {facilidades} = useFacilidad();
+
+  const [data, setData] = useState<FacilidadBase[]>(facilidades);
+
+  const handleFacilidadChange = (index: number, field: keyof Facilidad, value: string) => {
+    const newFacilidades = [...data]
+
     newFacilidades[index] = { ...newFacilidades[index], [field]: value }
 
     const newData = { facilidades: newFacilidades }
@@ -74,6 +96,7 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
       };
 
     const newData = {
+
           ...data,
           facilidades: [...data.facilidades, newFacilidad],
         };
@@ -83,31 +106,36 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
         facilidades: [...prev.facilidades, newFacilidad],
       }));
     onChange(newData)
+
+      ...data,
+      facilidades: [...facilidades, newFacilidad],
+    }
+
+    setData(newData)
+
   }
 
   const handleRemoveFacilidad = (index: number) => {
-    const newFacilidades = [...data.facilidades]
+    const newFacilidades = [...facilidades]
     newFacilidades.splice(index, 1)
 
     const newData = { ...data, facilidades: newFacilidades }
     setData(newData)
-    onChange(newData)
   }
 
   const moveFacilidad = (index: number, direction: "up" | "down") => {
-    if ((direction === "up" && index === 0) || (direction === "down" && index === data.facilidades.length - 1)) {
+    if ((direction === "up" && index === 0) || (direction === "down" && index === facilidades.length - 1)) {
       return
     }
 
     const newIndex = direction === "up" ? index - 1 : index + 1
-    const newFacilidades = [...data.facilidades]
+    const newFacilidades = [...facilidades]
     const temp = newFacilidades[index]
     newFacilidades[index] = newFacilidades[newIndex]
     newFacilidades[newIndex] = temp
 
     const newData = { ...data, facilidades: newFacilidades }
     setData(newData)
-    onChange(newData)
   }
 
   return (
@@ -126,7 +154,7 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
         </Button>
       </div>
 
-      {data.facilidades.length === 0 ? (
+      {facilidades.length === 0 ? (
         <div className="text-center py-8 border rounded-md bg-gray-50">
           <p className="text-gray-500">No hay facilidades agregadas</p>
           <Button
@@ -142,8 +170,13 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
         </div>
       ) : (
         <div className="space-y-6">
+
           {data.facilidades.map((facilidad, index) => (
             <div key={facilidad.id || facilidad._uuid} className="border rounded-md p-4 relative">
+
+          {facilidades.map((facilidad, index) => (
+            <div key={facilidad.id} className="border rounded-md p-4 relative">
+
               <div className="absolute top-2 right-2 flex space-x-1">
                 <Button
                   type="button"
@@ -161,7 +194,7 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
                   size="icon"
                   className="h-7 w-7 text-gray-500 hover:text-blue-500"
                   onClick={() => moveFacilidad(index, "down")}
-                  disabled={index === data.facilidades.length - 1}
+                  disabled={index === facilidades.length - 1}
                 >
                   <MoveDown size={16} />
                 </Button>
@@ -181,7 +214,11 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la facilidad</label>
                   <Input
                     value={facilidad.titulo}
+
                     onChange={(e) => handleFacilidadChange(index, "titulo", e.target.value)}
+
+                    onChange={(e) => handleFacilidadChange(index, "nombre", e.target.value)}
+
                     className="w-full"
                     placeholder="Ej: Piscina Infinita, Restaurante, Spa..."
                   />
@@ -211,8 +248,13 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
                     <div>
                       <ImageEditor
                         compact
+
                         currentImageUrl={facilidad.nombreImagen}
                         onImageChange={(url) => handleFacilidadChange(index, "nombreImagen", url)}
+
+                        currentImageUrl={facilidad.nombreImagen || "/placeholder.svg"}
+                        onImageChange={(url) => handleFacilidadChange(index, "imagen", url)}
+
                       />
                     </div>
                   </div>
