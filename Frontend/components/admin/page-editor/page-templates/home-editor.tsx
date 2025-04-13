@@ -90,7 +90,7 @@ export function HomeEditor() {
         <ImageEditor
           label="Imagen de la piscina"
           currentImageUrl={data.nombreImagenBienvenida || ""}
-          onImageChange={(url) => handleImageChange("imagenPiscina", url)}
+          onImageChange={(url) => handleImageChange("nombreImagenBienvenida", url)}
         />
       </div>
 
