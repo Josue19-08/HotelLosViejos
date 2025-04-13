@@ -66,7 +66,7 @@ const paginasData = {
         id: "1",
         nombre: "Piscina Infinita",
         descripcion:
-          "Disfrute de nuestra espectacular piscina infinita con vistas panorámicas al océano. Perfecta para relajarse bajo el sol tropical mientras disfruta de su bebida favorita del bar de la piscina. Contamos con tumbonas cómodas y servicio de toallas.",
+          "Disfrute de nuestra espectacular piscina infinita con vistas panorámicas al océano. Perfecta para relajarse bajo el sol tropical mientras disfruta de su bebida favorita del bar de la piscina. Contamos con tumbonas cómodas y servicio de toallas y mas.",
         imagen: "/placeholder.svg?height=300&width=400",
       },
       {
