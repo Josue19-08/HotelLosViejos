@@ -1,15 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageEditor } from "../image-editor"
+import { FacilidadBase, FacilidadActualizacion, FacilidadRegistro } from "@/types/Facilidad"
+import { useFacilidad } from "@/hooks/use-facilidades"
+import { Save, Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
 import { updateFacilities, registerFacilities } from "@/lib/FacilidadData"
 import { v4 as uuidv4 } from "uuid";
 interface FacilidadesData {
-  facilidades: Facilidad[]
+  facilidades: FacilidadBase[]
 }
 
 export function FacilidadesEditor({ onChange }: { onChange?: (data: FacilidadesData) => void }) {
@@ -59,20 +61,19 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
     const newFacilidades = [...data.facilidades]
     newFacilidades[index] = { ...newFacilidades[index], [field]: value }
 
-    const newData = { ...data, facilidades: newFacilidades }
+    const newData = { facilidades: newFacilidades }
     setData(newData)
   }
 
-  const handleAddFacilidad = () => {
-    const newFacilidad: Facilidad = {
-      id: Date.now().toString(),
-      nombre: "",
-      descripcion: "",
-      imagen: "/placeholder.svg?height=300&width=400",
-    }
+    const handleAddFacilidad = () => {
+      const newFacilidad: Facilidad = {
+        _uuid: uuidv4(),
+        titulo: "",
+        descripcion: "",
+        nombreImagen: "/placeholder.svg?height=300&width=400",
+      };
 
     const newData = {
-
           ...data,
           facilidades: [...data.facilidades, newFacilidad],
         };
@@ -82,7 +83,6 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
         facilidades: [...prev.facilidades, newFacilidad],
       }));
     onChange(newData)
-
   }
 
   const handleRemoveFacilidad = (index: number) => {
@@ -142,7 +142,6 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
         </div>
       ) : (
         <div className="space-y-6">
-
           {data.facilidades.map((facilidad, index) => (
             <div key={facilidad.id || facilidad._uuid} className="border rounded-md p-4 relative">
               <div className="absolute top-2 right-2 flex space-x-1">
@@ -212,13 +211,16 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
                     <div>
                       <ImageEditor
                         compact
-
                         currentImageUrl={facilidad.nombreImagen}
                         onImageChange={(url) => handleFacilidadChange(index, "nombreImagen", url)}
                       />
                     </div>
                   </div>
                 </div>
+                     <Button onClick={() => handleSave(index)} disabled={isSaving}>
+                       Guardar cambios
+                     </Button>
+
               </div>
             </div>
           ))}
