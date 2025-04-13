@@ -1,10 +1,3 @@
-"use client";
-import React from "react";
-import type React from "react";
-import { useState, use, useEffect } from "react";
-import { InformacionBase } from "@/types/Informacion";
-import { useInformacion } from "@/hooks/use-informacion";
-
 interface HomePageData {
   titulo: string
   subtitulo: string
@@ -13,25 +6,11 @@ interface HomePageData {
   imagenPiscina: string
 }
 
+interface HomePreviewProps {
+  data: HomePageData
+}
 
-export function HomePreview() {
-    const info = useInformacion();
-
-
-  const [data, setData] = useState<InformacionBase>({
-    id: info.id,
-    textoSobreNosotros: info.textoSobreNosotros,
-    textoBienvenida: info.textoBienvenida,
-    nombreImagenBienvenida: info.nombreImagenBienvenida,
-    nombre: info.nombre,
-  });
-
-  useEffect(() => {
-    if (!data.id && info.id) {
-      setData({ ...info });
-    }
-  }, [info]);
-
+export function HomePreview({ data }: HomePreviewProps) {
   return (
     <div className="bg-white border rounded-md overflow-hidden">
       {/* Hero Section */}
@@ -59,25 +38,20 @@ export function HomePreview() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <img
-                src={data.nombreImagenBienvenida || "/placeholder.svg?height=400&width=600"}
+                src={data.imagenPiscina || "/placeholder.svg?height=400&width=600"}
                 alt="Piscina del hotel"
                 className="rounded-md w-full h-auto shadow-md"
               />
             </div>
             <div>
               <h2 className="text-3xl font-playfair font-bold text-teal-700 mb-4">
-              {data.nombre ||"Bienvenidos al Hotel Los Viejos Resort"}
+                Bienvenidos al Hotel Los Viejos Resort
               </h2>
               <div className="text-gray-700 space-y-4">
-
-                {(data.textoBienvenida || "Ubicado en la hermosa costa, Hotel Los Viejos ofrece una experiencia única de hospedaje con vistas impresionantes al océano...").split(";").map((texto, index, array) => (
-                  <React.Fragment key={index}>
-                    <p>{texto.trim()}</p>
-                    {index < array.length - 1 && <br />}
-                  </React.Fragment>
-                ))}
-
-
+                <p className="whitespace-pre-line">
+                  {data.descripcionBienvenida ||
+                    "Ubicado en la hermosa costa, Hotel Los Viejos ofrece una experiencia única de hospedaje con vistas impresionantes al océano..."}
+                </p>
               </div>
             </div>
           </div>

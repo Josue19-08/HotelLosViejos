@@ -3,9 +3,6 @@ export interface FacilidadBase {
     titulo?: string;
     descripcion?: string;
     nombreImagen?: string;
-    _uuid?: string;
 }
 
 export interface FacilidadRegistro extends Omit<FacilidadBase, "id"> {}
-
-export interface FacilidadActualizacion extends Omit<FacilidadBase, "id"> {}
