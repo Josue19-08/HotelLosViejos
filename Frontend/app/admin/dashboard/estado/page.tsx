@@ -11,39 +11,30 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
+import { useHabitacion } from "@/hooks/use-habitacion"
+import { HabitacionBase } from "@/types/Habitacion"
 
-// Datos de ejemplo para las habitaciones
-const habitacionesData = [
-  { numero: 1, tipo: "Standard", estado: "DISPONIBLE" },
-  { numero: 2, tipo: "Standard", estado: "DISPONIBLE" },
-  { numero: 3, tipo: "Standard", estado: "DISPONIBLE" },
-  { numero: 4, tipo: "JUNIOR", estado: "DISPONIBLE" },
-  { numero: 5, tipo: "JUNIOR", estado: "OCUPADA" },
-  { numero: 6, tipo: "JUNIOR", estado: "RESERVADA" },
-  { numero: 7, tipo: "Deluxe", estado: "OCUPADA" },
-  { numero: 8, tipo: "Deluxe", estado: "DISPONIBLE" },
-  { numero: 9, tipo: "Deluxe", estado: "RESERVADA" },
-]
 
 export default function EstadoHotelPage() {
   const [username] = useState("USUARIO")
   const currentDate = new Date()
   const formattedDate = format(currentDate, "dd/MM/yyyy", { locale: es })
-
-  // Función para imprimir la página
+  const habitaciones= useHabitacion();
+  
   const handlePrint = () => {
     window.print()
   }
 
-  // Función para obtener la clase de color según el estado
   const getEstadoClass = (estado: string) => {
     switch (estado) {
-      case "DISPONIBLE":
+      case "LIBRE":
         return "text-green-600 bg-green-50"
       case "OCUPADA":
         return "text-red-600 bg-red-50"
-      case "RESERVADA":
+      case "LIMPIEZA":
         return "text-blue-600 bg-blue-50"
+      case "DESHABILITADA":
+        return "text-orange-600 bg-blue-50"
       default:
         return ""
     }
@@ -92,7 +83,7 @@ export default function EstadoHotelPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {habitacionesData.map((habitacion) => (
+                    {habitaciones.map((habitacion : HabitacionBase) => (
                       <TableRow key={habitacion.numero}>
                         <TableCell>{habitacion.numero}</TableCell>
                         <TableCell>{habitacion.tipo}</TableCell>
