@@ -11,6 +11,7 @@ import com.hotelLosViejos.HotelLosViejos.Dominio.Reserva;
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Cliente.ClienteMapperDTO;
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.DatoPago.DatoPagoMapperDTO;
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Reserva.*;
+import com.lowagie.text.Document;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,5 +107,11 @@ public class ReservaControlador {
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> eliminarReserva(@PathVariable @Min(value = 1, message = "{reserva.id.mayor1}") int id) {
         return ResponseEntity.ok(iReserva.eliminarReserva(id));
+    }
+
+    @GetMapping("/pdf/{idReserva}")
+    public ResponseEntity<byte[]> obtenerPDFReserva( @Min(value = 1, message = "{reserva.id.mayor1}")
+                                                           @PathVariable int idReserva){
+        return ResponseEntity.ok(this.iReserva.obtenerPDFReserva(idReserva));
     }
 }
