@@ -9,6 +9,13 @@ import { useHabitacion } from "@/hooks/use-habitacion";
 export default function TarifasPage() {
   const habitaciones = useHabitacion();
 
+ // Filtrar para obtener solo una habitación por tipo
+  const uniqueRoomTypes = Array.from(new Set(habitaciones.map(h => h.tipo))); // Obtener tipos únicos de habitaciones
+  const habitacionesUnicasPorTipo = uniqueRoomTypes.map((tipo) => {
+    return habitaciones.find(habitacion => habitacion.tipo === tipo); // Obtener la primera habitación por tipo
+  }).filter(Boolean) as HabitacionBase[]; // Filtrar null o undefined si no existe habitación de ese tipo
+
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       <SiteHeader />
@@ -39,7 +46,7 @@ export default function TarifasPage() {
               </div>
 
               <div className="space-y-8">
-                {habitaciones.map((habitacion, index) => (
+                {habitacionesUnicasPorTipo.map((habitacion, index) => (
                   <div
                     key={habitacion.id}
                     className="opacity-0 animate-fade-in-up"

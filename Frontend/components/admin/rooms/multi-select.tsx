@@ -66,8 +66,8 @@ export function MultiSelect({
                 return option ? (
                   <Badge key={value} variant="secondary" className="mr-1 mb-1">
                     {option.label}
-                    <button
-                      className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    <span
+                      className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleRemove(value)
@@ -78,10 +78,13 @@ export function MultiSelect({
                         e.stopPropagation()
                       }}
                       onClick={() => handleRemove(value)}
+                      role="button" // Make it clear this is an interactive element
+                      aria-label="Remove item" // Optional: Add an aria-label for better accessibility
                     >
                       <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                    </button>
+                    </span>
                   </Badge>
+
                 ) : null
               })}
             </div>

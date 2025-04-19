@@ -58,6 +58,7 @@ public class HabitacionServicio implements IHabitacion {
             habitacionExistente.setTarifaDiariaBase(habitacionNueva.getTarifaDiariaBase());
             habitacionExistente.setTipo(habitacionNueva.getTipo());
             habitacionExistente.setEstado(habitacionNueva.getEstado());
+            habitacionExistente.setNombreImagen(habitacionNueva.getNombreImagen());
             habitacionExistente.setCaracteristicas(habitacionNueva.getCaracteristicas());
 
             habitacionRepositorio.save(habitacionExistente);
