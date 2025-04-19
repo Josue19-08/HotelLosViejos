@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { HabitacionBase } from "@/types/Habitacion";
-import { getAllHabitaciones } from "@/lib/HabitacionData";
+import { HabitacionBase, Caracteristica } from "@/types/Habitacion";
+import { getAllHabitaciones, getAllCaracteristicas } from "@/lib/HabitacionData";
 
 export const useHabitacion = () => {
   const [habitaciones, setHabitaciones] = useState<HabitacionBase[]>([]);
@@ -20,4 +20,25 @@ export const useHabitacion = () => {
   }, []);
 
   return habitaciones;
+};
+
+
+
+export const useCaracteristisca = () => {
+  const [caracteristicas, setCaracteristicas] = useState<Caracteristica[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getAllCaracteristicas();
+        setCaracteristicas(data);
+      } catch (error) {
+        console.error("Error al obtener caracteristicas:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  return caracteristicas;
 };

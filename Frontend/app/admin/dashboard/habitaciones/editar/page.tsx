@@ -13,86 +13,83 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+
+import { updateHabitaciones, registerHabitaciones } from "@/lib/HabitacionData"
 import { MultiSelect } from "@/components/admin/rooms/multi-select"
+import { useHabitacion, useCaracteristisca  } from "@/hooks/use-habitacion"
 
-// Datos de ejemplo para las habitaciones
-const habitacionesData = {
-  standard: {
-    descripcion:
-      "Lorem ipsum dolor sit amet, maiores ornare ac fermentum, imperdiet ut vivamus a, nam lectus at nunc. Cum quam euismod sem, semper ut potenti pellentesque quisque. In eget sapien sed, sit duis vestibulum ultricies, placerat morbi amet vel, nullam in in lorem vel. In molestie elit dui dictum, praesent nascetur pulvinar sed, in dolor pede in aliquam, risus nec error quis pharetra.",
-    tarifa: 120,
-    imagen: "/placeholder.svg?height=200&width=300",
-    caracteristicas: ["wifi", "tv", "aire"],
-  },
-  junior: {
-    descripcion:
-      "Habitación Junior con espacio adicional y vistas parciales al mar. Incluye una cama king size, baño privado con amenidades premium, aire acondicionado, TV de pantalla plana y acceso a WiFi de alta velocidad.",
-    tarifa: 180,
-    imagen: "/placeholder.svg?height=200&width=300",
-    caracteristicas: ["wifi", "tv", "aire", "minibar", "vista"],
-  },
-  deluxe: {
-    descripcion:
-      "Habitación Deluxe con vistas panorámicas al océano. Incluye una cama king size, sala de estar, baño privado con jacuzzi, aire acondicionado, TV de pantalla plana, minibar y acceso a WiFi de alta velocidad.",
-    tarifa: 250,
-    imagen: "/placeholder.svg?height=200&width=300",
-    caracteristicas: ["wifi", "tv", "aire", "minibar", "vista", "jacuzzi", "sala"],
-  },
-}
 
-// Lista de todas las características posibles
-const todasLasCaracteristicas = [
-  { value: "wifi", label: "WiFi" },
-  { value: "tv", label: "TV" },
-  { value: "aire", label: "Aire acondicionado" },
-  { value: "minibar", label: "Minibar" },
-  { value: "vista", label: "Vista al mar" },
-  { value: "jacuzzi", label: "Jacuzzi" },
-  { value: "sala", label: "Sala de estar" },
-  { value: "balcon", label: "Balcón" },
-  { value: "desayuno", label: "Desayuno incluido" },
-  { value: "caja", label: "Caja fuerte" },
-]
 
 export default function EditarHabitacionPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tipo = searchParams.get("tipo") || ""
   const numero = searchParams.get("numero") || ""
+ const habitaciones = useHabitacion()
+ const caracteristica = useCaracteristisca()
+
+// Asegúrate de que cada caracteristica tenga un `id` y `titulo` correctos.
+const todasLasCaracteristicas = caracteristica.map((c) => ({
+  value: c.id,        // Usamos un valor único (id) como value
+  label: c.titulo,    // Lo que se muestra en la interfaz
+  data: c             // El objeto completo para referencia
+}));
 
   const [username] = useState("USUARIO")
   const [isSaving, setIsSaving] = useState(false)
-  const [formData, setFormData] = useState({
-    descripcion: "",
-    tarifa: 0,
-    imagen: "",
-    caracteristicas: [] as string[],
-  })
-  const [filePreview, setFilePreview] = useState("")
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value
-    setFormData((prev) => ({
-      ...prev,
-      imagen: url,
-    }))
-    setFilePreview(url)
-  }
 
-  // Cargar datos iniciales
-  useEffect(() => {
-    if (tipo && habitacionesData[tipo as keyof typeof habitacionesData]) {
-      setFormData(habitacionesData[tipo as keyof typeof habitacionesData])
-      setFilePreview(habitacionesData[tipo as keyof typeof habitacionesData].imagen)
-    }
-  }, [tipo])
+
+   const [formData, setFormData] = useState({
+       id: "",
+       tarifaDiariaBase: 0,
+       nombreImagen: "",
+       caracteristicas: [] as string[],
+       numero: "",
+       estado: "",
+       tipo: "",
+     })
+
+
+  const [filePreview, setFilePreview] = useState("")
+  const [imageInputValue, setImageInputValue] = useState("");
+   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      // Actualiza el valor temporal mientras el usuario escribe
+      setImageInputValue(e.target.value);
+    };
+
+    const handleAcceptClick = () => {
+      // Actualiza la previsualización y formData al presionar "Aceptar"
+      setFilePreview(imageInputValue); // Actualiza la previsualización de la imagen
+      setFormData((prev) => ({ ...prev, nombreImagen: imageInputValue })); // Actualiza formData
+      console.log("Nuevo valor de imagen:", imageInputValue);  // Agrega este log para verificar
+    };
+
+
+   useEffect(() => {
+     if (!numero || habitaciones.length === 0) return;
+
+     const habitacion = habitaciones.find((h) => String(h.id) === numero);
+
+     if (habitacion) {
+       setFormData({
+         id: habitacion.id || 0,
+         tarifaDiariaBase: habitacion.tarifaDiariaBase || 0,
+         nombreImagen: habitacion.nombreImagen || "",
+        caracteristicas: (habitacion.caracteristicas || []).map((c: any) => c.id),
+         numero: habitacion.numero || "",
+         estado: habitacion.estado || "",
+         tipo: habitacion.tipo || "",
+       });
+       setFilePreview(habitacion.nombreImagen || "");
+     }
+   }, [habitaciones, numero]);
 
   // Manejar cambios en el formulario
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "tarifa" ? Number.parseFloat(value) || 0 : value,
+      [name]: name === "tarifaDiariaBase" ? Number.parseFloat(value) || 0 : value,
     }))
   }
 
@@ -104,28 +101,41 @@ export default function EditarHabitacionPage() {
     }))
   }
 
-  // Manejar selección de archivo
-  // Guardar cambios
-  const handleSave = async () => {
-    setIsSaving(true)
+const handleSave = async () => {
+  setIsSaving(true);
 
-    // Simulación de guardado
-    await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    // Aquí iría la lógica real para guardar los cambios en la base de datos
-    console.log("Guardando cambios:", {
-      tipo,
-      numero,
-      ...formData,
-      imagen: formData.imagen,
-    })
 
-    setIsSaving(false)
+  const habitacionData: any = {
+      id: formData.id,
+      numero: Number(formData.numero),
+      tarifaDiariaBase: formData.tarifaDiariaBase,
+      nombreImagen: formData.nombreImagen,
+      estado: formData.estado,
+      tipo: formData.tipo,
+      caracteristicasIds: formData.caracteristicas
 
-    // Mostrar mensaje de éxito y volver a la lista
-    alert("Cambios guardados correctamente")
-    router.push("/admin/dashboard/habitaciones")
+   }
+
+
+console.log("Datos que se van a guardar:", habitacionData);
+
+  if (!formData.numero || !formData.estado || !formData.tipo || !formData.tarifaDiariaBase) {
+    alert("Por favor completa todos los campos obligatorios.");
+    setIsSaving(false);
+    return;
   }
+
+ if (formData.id) {
+    await updateHabitaciones( habitacionData );
+  } else {
+    await registerHabitaciones(habitacionData);
+  }
+
+  alert("Cambios guardados correctamente");
+  router.push("/admin/dashboard/habitaciones");
+}
+
 
   // Volver a la lista de habitaciones
   const handleBack = () => {
@@ -220,9 +230,9 @@ export default function EditarHabitacionPage() {
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2">$</span>
                       <Input
                         id="tarifa"
-                        name="tarifa"
+                        name="tarifaDiariaBase"
                         type="number"
-                        value={formData.tarifa}
+                        value={formData.tarifaDiariaBase}
                         onChange={handleChange}
                         className="pl-7 w-24"
                       />
@@ -231,18 +241,50 @@ export default function EditarHabitacionPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="descripcion">Descripción</Label>
-                  <div className="border rounded-md">
-                    <Textarea
-                      id="descripcion"
-                      name="descripcion"
-                      value={formData.descripcion}
-                      onChange={handleChange}
-                      rows={8}
-                      className="min-h-[200px] resize-y"
-                    />
-                  </div>
-                </div>
+                                  <Label htmlFor="numero">Número de habitación</Label>
+                                  <Input
+                                    id="numero"
+                                    name="numero"
+                                    type="number"
+                                    value={formData.numero}
+                                    onChange={handleChange}
+                                    className="w-32"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="estado">Estado</Label>
+                                  <select
+                                    id="estado"
+                                    name="estado"
+                                    value={formData.estado}
+                                    onChange={handleChange}
+                                    className="w-full border rounded-md px-3 py-2"
+                                  >
+                                    <option value="">Selecciona un estado</option>
+                                                                        <option value="LIBRE">Libre</option>
+                                                                        <option value="OCUPADA">Ocupada</option>
+                                                                        <option value="MANTENIMIENTO">En mantenimiento</option>
+                                                                        <option value="LIMPIEZA">En Limpieza</option>
+                                                                        <option value="DESHABILITADA">Deshabilitada</option>
+                                  </select>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <Label htmlFor="tipo">Tipo de habitación</Label>
+                                  <select
+                                    id="tipo"
+                                    name="tipo"
+                                    value={formData.tipo}
+                                    onChange={handleChange}
+                                    className="w-full border rounded-md px-3 py-2"
+                                  >
+                                    <option value="">Selecciona un tipo</option>
+                                                                        <option value="ESTANDAR">Estándar</option>
+                                                                        <option value="JUNIOR">Junior</option>
+                                  </select>
+                                </div>
+
+
 
                 <div className="space-y-2">
                   <Label>Características</Label>
@@ -259,15 +301,15 @@ export default function EditarHabitacionPage() {
                     <div className="border rounded-md overflow-hidden bg-gray-50 flex items-center justify-center h-[200px]">
                       {filePreview ? (
                         <img
-                          src={filePreview || "/placeholder.svg"}
+                          src={filePreview}
+                          onError={() => setFilePreview("/placeholder.svg")}
                           alt="Imagen de habitación"
                           className="max-w-full max-h-full object-contain"
                         />
                       ) : (
-                        <div className="flex flex-col items-center justify-center text-gray-400">
-                          <span className="text-sm">No hay imagen</span>
-                        </div>
+                        <div className="text-gray-400">Sin imagen</div>
                       )}
+
                     </div>
                   </div>
 
@@ -276,10 +318,10 @@ export default function EditarHabitacionPage() {
                     <div className="border rounded-md p-4 bg-gray-50">
                       <div className="flex items-center gap-2 mb-4">
                         <Input
-                          id="imagen"
-                          type="text"
+                          id="nombreImagen"
+                          name="nombreImagen"
                           placeholder="https://ejemplo.com/imagen.jpg"
-                          value={formData.imagen}
+                          value={imageInputValue}
                           onChange={handleImageUrlChange}
                           className="flex-1"
                         />
@@ -291,19 +333,20 @@ export default function EditarHabitacionPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            setFormData((prev) => ({ ...prev, imagen: "" }))
+                            setFormData((prev) => ({ ...prev, nombreImagen: "" }))
                             setFilePreview("")
                           }}
                         >
                           Cancelar
                         </Button>
                         <Button
-                          size="sm"
-                          className="bg-teal-600 hover:bg-teal-700"
-                          onClick={() => setFilePreview(formData.imagen)}
-                        >
-                          Aceptar
-                        </Button>
+                                      size="sm"
+                                      className="bg-teal-600 hover:bg-teal-700"
+                                      onClick={handleAcceptClick} // Actualiza la imagen de previsualización y formData
+                                    >
+                                      Aceptar
+                                    </Button>
+
                       </div>
                     </div>
                   </div>
