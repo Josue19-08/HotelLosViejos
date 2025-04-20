@@ -1,6 +1,5 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react";
 import { Hotel } from "lucide-react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { AdminFooter } from "@/components/admin/admin-footer";
@@ -10,28 +9,23 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RoomDescriptionModal } from "@/components/admin/rooms/room-description-modal";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useHabitacion } from "@/hooks/use-habitacion";
-import type { HabitacionBase } from "@/types/Habitacion";
+import { useEditarHabitacion } from "@/hooks/use-admin-editar-habitacion";
 
 export default function AdministrarHabitacionesPage() {
-  const router = useRouter();
-  const habitaciones = useHabitacion();
-
-  const [username] = useState("USUARIO");
-  const [showDescriptionModal, setShowDescriptionModal] = useState(false);
-  const [selectedRoomType, setSelectedRoomType] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-
-  const handleEditRoom = (tipo: string, numero: number) => {
-      router.push(`/admin/dashboard/habitaciones/editar?tipo=${tipo}&numero=${numero}`);
-  };
+  const {
+    username,
+    showDescriptionModal,
+    setShowDescriptionModal,
+    selectedRoomType,
+    setSelectedRoomType,
+    handleEditRoom,
+    habitacionesFiltradasPorTipo,
+  } = useEditarHabitacion();
 
   // Función para renderizar la tabla por tipo de habitación
-  const renderRoomTable = (tipo: HabitacionBase["tipo"], titulo: string) => {
-    const habitacionesFiltradas = habitaciones.filter(h => h.tipo === tipo);
+  const renderRoomTable = (tipo: string, titulo: string) => {
+    const habitacionesFiltradas = habitacionesFiltradasPorTipo(tipo);
 
     if (habitacionesFiltradas.length === 0) return null;
 
