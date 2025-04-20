@@ -1,156 +1,35 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { Hotel, Save, ArrowLeft, Upload } from "lucide-react"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { AdminFooter } from "@/components/admin/admin-footer"
-import { AdminSidebar } from "@/components/admin/admin-sidebar"
-import { UserWelcome } from "@/components/admin/user-welcome"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-
-import { updateHabitaciones, registerHabitaciones } from "@/lib/HabitacionData"
-import { MultiSelect } from "@/components/admin/rooms/multi-select"
-import { useHabitacion, useCaracteristisca  } from "@/hooks/use-habitacion"
-
-
+import { Hotel, Save, ArrowLeft } from "lucide-react";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { AdminFooter } from "@/components/admin/admin-footer";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { UserWelcome } from "@/components/admin/user-welcome";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MultiSelect } from "@/components/admin/rooms/multi-select";
+import { useEditarHabitacion } from "@/hooks/use-admin-editar-habitacion";
 
 export default function EditarHabitacionPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const tipo = searchParams.get("tipo") || ""
-  const numero = searchParams.get("numero") || ""
- const habitaciones = useHabitacion()
- const caracteristica = useCaracteristisca()
-
-// Asegúrate de que cada caracteristica tenga un `id` y `titulo` correctos.
-const todasLasCaracteristicas = caracteristica.map((c) => ({
-  value: c.id,        // Usamos un valor único (id) como value
-  label: c.titulo,    // Lo que se muestra en la interfaz
-  data: c             // El objeto completo para referencia
-}));
-
-  const [username] = useState("USUARIO")
-  const [isSaving, setIsSaving] = useState(false)
-
-
-   const [formData, setFormData] = useState({
-       id: "",
-       tarifaDiariaBase: 0,
-       nombreImagen: "",
-       caracteristicas: [] as string[],
-       numero: "",
-       estado: "",
-       tipo: "",
-     })
-
-
-  const [filePreview, setFilePreview] = useState("")
-  const [imageInputValue, setImageInputValue] = useState("");
-   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      // Actualiza el valor temporal mientras el usuario escribe
-      setImageInputValue(e.target.value);
-    };
-
-    const handleAcceptClick = () => {
-      // Actualiza la previsualización y formData al presionar "Aceptar"
-      setFilePreview(imageInputValue); // Actualiza la previsualización de la imagen
-      setFormData((prev) => ({ ...prev, nombreImagen: imageInputValue })); // Actualiza formData
-      console.log("Nuevo valor de imagen:", imageInputValue);  // Agrega este log para verificar
-    };
-
-
-   useEffect(() => {
-     if (!numero || habitaciones.length === 0) return;
-
-     const habitacion = habitaciones.find((h) => String(h.id) === numero);
-
-     if (habitacion) {
-       setFormData({
-         id: habitacion.id || 0,
-         tarifaDiariaBase: habitacion.tarifaDiariaBase || 0,
-         nombreImagen: habitacion.nombreImagen || "",
-        caracteristicas: (habitacion.caracteristicas || []).map((c: any) => c.id),
-         numero: habitacion.numero || "",
-         estado: habitacion.estado || "",
-         tipo: habitacion.tipo || "",
-       });
-       setFilePreview(habitacion.nombreImagen || "");
-     }
-   }, [habitaciones, numero]);
-
-  // Manejar cambios en el formulario
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "tarifaDiariaBase" ? Number.parseFloat(value) || 0 : value,
-    }))
-  }
-
-  // Manejar cambio de características
-  const handleCaracteristicasChange = (selectedValues: string[]) => {
-    setFormData((prev) => ({
-      ...prev,
-      caracteristicas: selectedValues,
-    }))
-  }
-
-const handleSave = async () => {
-  setIsSaving(true);
-
-
-
-  const habitacionData: any = {
-      id: formData.id,
-      numero: Number(formData.numero),
-      tarifaDiariaBase: formData.tarifaDiariaBase,
-      nombreImagen: formData.nombreImagen,
-      estado: formData.estado,
-      tipo: formData.tipo,
-      caracteristicasIds: formData.caracteristicas
-
-   }
-
-
-console.log("Datos que se van a guardar:", habitacionData);
-
-  if (!formData.numero || !formData.estado || !formData.tipo || !formData.tarifaDiariaBase) {
-    alert("Por favor completa todos los campos obligatorios.");
-    setIsSaving(false);
-    return;
-  }
-
- if (formData.id) {
-    await updateHabitaciones( habitacionData );
-  } else {
-    await registerHabitaciones(habitacionData);
-  }
-
-  alert("Cambios guardados correctamente");
-  router.push("/admin/dashboard/habitaciones");
-}
-
-
-  // Volver a la lista de habitaciones
-  const handleBack = () => {
-    router.push("/admin/dashboard/habitaciones")
-  }
-
-  // Obtener título según el tipo
-  const getTipoTitulo = () => {
-    const tipos = {
-      standard: "Standard",
-      junior: "Junior",
-      deluxe: "Deluxe",
-    }
-    return tipos[tipo as keyof typeof tipos] || tipo
-  }
+  const {
+    username,
+    isSaving,
+    formData,
+    filePreview,
+    imageInputValue,
+    todasLasCaracteristicas,
+    handleChange,
+    handleCaracteristicasChange,
+    handleImageUrlChange,
+    handleAcceptClick,
+    handleSave,
+    handleBack,
+    getTipoTitulo,
+    setFormData,
+    setFilePreview,
+  } = useEditarHabitacion();
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -241,50 +120,49 @@ console.log("Datos que se van a guardar:", habitacionData);
                 </div>
 
                 <div className="space-y-2">
-                                  <Label htmlFor="numero">Número de habitación</Label>
-                                  <Input
-                                    id="numero"
-                                    name="numero"
-                                    type="number"
-                                    value={formData.numero}
-                                    onChange={handleChange}
-                                    className="w-32"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="estado">Estado</Label>
-                                  <select
-                                    id="estado"
-                                    name="estado"
-                                    value={formData.estado}
-                                    onChange={handleChange}
-                                    className="w-full border rounded-md px-3 py-2"
-                                  >
-                                    <option value="">Selecciona un estado</option>
-                                                                        <option value="LIBRE">Libre</option>
-                                                                        <option value="OCUPADA">Ocupada</option>
-                                                                        <option value="MANTENIMIENTO">En mantenimiento</option>
-                                                                        <option value="LIMPIEZA">En Limpieza</option>
-                                                                        <option value="DESHABILITADA">Deshabilitada</option>
-                                  </select>
-                                </div>
+                  <Label htmlFor="numero">Número de habitación</Label>
+                  <Input
+                    id="numero"
+                    name="numero"
+                    type="number"
+                    value={formData.numero}
+                    onChange={handleChange}
+                    className="w-32"
+                  />
+                </div>
 
-                                <div className="space-y-2">
-                                  <Label htmlFor="tipo">Tipo de habitación</Label>
-                                  <select
-                                    id="tipo"
-                                    name="tipo"
-                                    value={formData.tipo}
-                                    onChange={handleChange}
-                                    className="w-full border rounded-md px-3 py-2"
-                                  >
-                                    <option value="">Selecciona un tipo</option>
-                                                                        <option value="ESTANDAR">Estándar</option>
-                                                                        <option value="JUNIOR">Junior</option>
-                                  </select>
-                                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="estado">Estado</Label>
+                  <select
+                    id="estado"
+                    name="estado"
+                    value={formData.estado}
+                    onChange={handleChange}
+                    className="w-full border rounded-md px-3 py-2"
+                  >
+                    <option value="">Selecciona un estado</option>
+                    <option value="LIBRE">Libre</option>
+                    <option value="OCUPADA">Ocupada</option>
+                    <option value="MANTENIMIENTO">En mantenimiento</option>
+                    <option value="LIMPIEZA">En Limpieza</option>
+                    <option value="DESHABILITADA">Deshabilitada</option>
+                  </select>
+                </div>
 
-
+                <div className="space-y-2">
+                  <Label htmlFor="tipo">Tipo de habitación</Label>
+                  <select
+                    id="tipo"
+                    name="tipo"
+                    value={formData.tipo}
+                    onChange={handleChange}
+                    className="w-full border rounded-md px-3 py-2"
+                  >
+                    <option value="">Selecciona un tipo</option>
+                    <option value="ESTANDAR">Estándar</option>
+                    <option value="JUNIOR">Junior</option>
+                  </select>
+                </div>
 
                 <div className="space-y-2">
                   <Label>Características</Label>
@@ -309,7 +187,6 @@ console.log("Datos que se van a guardar:", habitacionData);
                       ) : (
                         <div className="text-gray-400">Sin imagen</div>
                       )}
-
                     </div>
                   </div>
 
@@ -325,28 +202,18 @@ console.log("Datos que se van a guardar:", habitacionData);
                           onChange={handleImageUrlChange}
                           className="flex-1"
                         />
-
                       </div>
 
                       <div className="flex justify-end gap-2 mt-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setFormData((prev) => ({ ...prev, nombreImagen: "" }))
-                            setFilePreview("")
-                          }}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => {
+                          setFormData((prev) => ({ ...prev, nombreImagen: "" }));
+                          setFilePreview("");
+                        }}>
                           Cancelar
                         </Button>
-                        <Button
-                                      size="sm"
-                                      className="bg-teal-600 hover:bg-teal-700"
-                                      onClick={handleAcceptClick} // Actualiza la imagen de previsualización y formData
-                                    >
-                                      Aceptar
-                                    </Button>
-
+                        <Button size="sm" className="bg-teal-600 hover:bg-teal-700" onClick={handleAcceptClick}>
+                          Aceptar
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -359,6 +226,5 @@ console.log("Datos que se van a guardar:", habitacionData);
 
       <AdminFooter />
     </div>
-  )
+  );
 }
-
