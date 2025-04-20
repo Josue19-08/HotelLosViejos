@@ -4,17 +4,10 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Sidebar } from "@/components/layout/sidebar";
 import { RoomTypeCard } from "@/components/rates/room-type-card";
-import { useHabitacion } from "@/hooks/use-habitacion";
+import { useTarifas } from "@/hooks/use-tarifas";
 
 export default function TarifasPage() {
-  const habitaciones = useHabitacion();
-
- // Filtrar para obtener solo una habitación por tipo
-  const uniqueRoomTypes = Array.from(new Set(habitaciones.map(h => h.tipo))); // Obtener tipos únicos de habitaciones
-  const habitacionesUnicasPorTipo = uniqueRoomTypes.map((tipo) => {
-    return habitaciones.find(habitacion => habitacion.tipo === tipo); // Obtener la primera habitación por tipo
-  }).filter(Boolean) as HabitacionBase[]; // Filtrar null o undefined si no existe habitación de ese tipo
-
+  const { habitacionesUnicasPorTipo } = useTarifas();
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">

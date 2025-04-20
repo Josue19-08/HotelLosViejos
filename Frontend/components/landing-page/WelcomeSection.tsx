@@ -52,10 +52,6 @@ export function WelcomeSection({ content }: WelcomeSectionProps) {
                 <br />
               </React.Fragment>
             ))}
-
-
-
-
           </div>
         </div>
       </div>
