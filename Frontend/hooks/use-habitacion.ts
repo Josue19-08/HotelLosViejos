@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { HabitacionBase, Caracteristica } from "@/types/Habitacion";
 import { getAllHabitaciones, getAllCaracteristicas } from "@/lib/HabitacionData";
 
@@ -19,10 +21,35 @@ export const useHabitacion = () => {
     fetchData();
   }, []);
 
-  return habitaciones;
+  const currentDate = new Date();
+  const formattedDate = format(currentDate, "dd/MM/yyyy", { locale: es });
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const getEstadoClass = (estado: string) => {
+    switch (estado) {
+      case "LIBRE":
+        return "text-green-600 bg-green-50";
+      case "OCUPADA":
+        return "text-red-600 bg-red-50";
+      case "LIMPIEZA":
+        return "text-blue-600 bg-blue-50";
+      case "DESHABILITADA":
+        return "text-orange-600 bg-blue-50";
+      default:
+        return "";
+    }
+  };
+
+  return {
+    habitaciones,
+    formattedDate,
+    handlePrint,
+    getEstadoClass,
+  };
 };
-
-
 
 export const useCaracteristisca = () => {
   const [caracteristicas, setCaracteristicas] = useState<Caracteristica[]>([]);
