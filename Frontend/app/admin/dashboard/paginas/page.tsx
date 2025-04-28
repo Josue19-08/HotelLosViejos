@@ -1,48 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { FileEdit, Home, Info, BookOpen, MapPin } from "lucide-react"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { AdminFooter } from "@/components/admin/admin-footer"
-import { AdminSidebar } from "@/components/admin/admin-sidebar"
-import { UserWelcome } from "@/components/admin/user-welcome"
-import { Card } from "@/components/ui/card"
-
-// Definición de las páginas que se pueden modificar
-const paginas = [
-  {
-    id: "home",
-    nombre: "Home",
-    icono: <Home size={20} />,
-    ruta: "/",
-    descripcion: "Página principal del sitio web",
-  },
-  {
-    id: "sobre-nosotros",
-    nombre: "Sobre Nosotros",
-    icono: <Info size={20} />,
-    ruta: "/sobre-nosotros",
-    descripcion: "Información sobre el hotel y su historia",
-  },
-  {
-    id: "facilidades",
-    nombre: "Facilidades",
-    icono: <BookOpen size={20} />,
-    ruta: "/facilidades",
-    descripcion: "Servicios y comodidades que ofrece el hotel",
-  },
-  {
-    id: "como-llegar",
-    nombre: "Como llegar",
-    icono: <MapPin size={20} />,
-    ruta: "/como-llegar",
-    descripcion: "Ubicación y direcciones para llegar al hotel",
-  },
-]
+import Link from "next/link";
+import { FileEdit } from "lucide-react";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { AdminFooter } from "@/components/admin/admin-footer";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { UserWelcome } from "@/components/admin/user-welcome";
+import { Card } from "@/components/ui/card";
+import { useAdminPaginas } from "@/hooks/use-admin-paginas";
 
 export default function ModificarPaginasPage() {
-  const [username] = useState("USUARIO")
+  const { username, paginasDisponibles } = useAdminPaginas();
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -69,14 +37,15 @@ export default function ModificarPaginasPage() {
               </div>
 
               <div className="space-y-4">
-                {paginas.map((pagina) => (
+                {paginasDisponibles.map((pagina) => (
                   <Link key={pagina.id} href={`/admin/dashboard/paginas/${pagina.id}`} className="block">
                     <div className="border rounded-lg p-4 bg-white hover:bg-teal-50 hover:border-teal-200 transition-all duration-300 hover:shadow-md">
                       <div className="flex items-center gap-3">
-                        <div className="text-teal-600 bg-teal-50 p-3 rounded-full">{pagina.icono}</div>
+                        <div className="text-teal-600 bg-teal-50 p-3 rounded-full">
+                          <pagina.icono size={20} />
+                        </div>
                         <div>
                           <h3 className="font-medium text-gray-800 text-lg">{pagina.nombre}</h3>
-                          <p className="text-sm text-gray-500">{pagina.descripcion}</p>
                         </div>
                         <div className="ml-auto">
                           <span className="text-blue-500 hover:text-blue-600 hover:underline text-sm font-medium">
@@ -103,6 +72,5 @@ export default function ModificarPaginasPage() {
 
       <AdminFooter />
     </div>
-  )
+  );
 }
-

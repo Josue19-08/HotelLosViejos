@@ -1,44 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { BarChart, Printer } from "lucide-react"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { AdminFooter } from "@/components/admin/admin-footer"
-import { AdminSidebar } from "@/components/admin/admin-sidebar"
-import { UserWelcome } from "@/components/admin/user-welcome"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { format } from "date-fns"
-import { es } from "date-fns/locale"
-import { useHabitacion } from "@/hooks/use-habitacion"
-import { HabitacionBase } from "@/types/Habitacion"
-
+import { useState } from "react";
+import { BarChart, Printer } from "lucide-react";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { AdminFooter } from "@/components/admin/admin-footer";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { UserWelcome } from "@/components/admin/user-welcome";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useHabitacion } from "@/hooks/use-habitacion";
+import { HabitacionBase } from "@/types/Habitacion";
 
 export default function EstadoHotelPage() {
-  const [username] = useState("USUARIO")
-  const currentDate = new Date()
-  const formattedDate = format(currentDate, "dd/MM/yyyy", { locale: es })
-  const habitaciones= useHabitacion();
-  
-  const handlePrint = () => {
-    window.print()
-  }
-
-  const getEstadoClass = (estado: string) => {
-    switch (estado) {
-      case "LIBRE":
-        return "text-green-600 bg-green-50"
-      case "OCUPADA":
-        return "text-red-600 bg-red-50"
-      case "LIMPIEZA":
-        return "text-blue-600 bg-blue-50"
-      case "DESHABILITADA":
-        return "text-orange-600 bg-blue-50"
-      default:
-        return ""
-    }
-  }
+  const [username] = useState("USUARIO");
+  const { habitaciones, formattedDate, handlePrint, getEstadoClass } = useHabitacion();
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -77,13 +53,13 @@ export default function EstadoHotelPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/3">Numero de Habitacion</TableHead>
+                      <TableHead className="w-1/3">Número de Habitación</TableHead>
                       <TableHead className="w-1/3">Tipo</TableHead>
                       <TableHead className="w-1/3">Estado</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {habitaciones.map((habitacion : HabitacionBase) => (
+                    {habitaciones.map((habitacion: HabitacionBase) => (
                       <TableRow key={habitacion.numero}>
                         <TableCell>{habitacion.numero}</TableCell>
                         <TableCell>{habitacion.tipo}</TableCell>
@@ -113,6 +89,5 @@ export default function EstadoHotelPage() {
 
       <AdminFooter className="print:hidden" />
     </div>
-  )
+  );
 }
-

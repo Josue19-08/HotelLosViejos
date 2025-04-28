@@ -4,10 +4,10 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Sidebar } from "@/components/layout/sidebar";
 import { RoomTypeCard } from "@/components/rates/room-type-card";
-import { useHabitacion } from "@/hooks/use-habitacion";
+import { useTarifas } from "@/hooks/use-tarifas";
 
 export default function TarifasPage() {
-  const habitaciones = useHabitacion();
+  const { habitacionesUnicasPorTipo } = useTarifas();
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -39,7 +39,7 @@ export default function TarifasPage() {
               </div>
 
               <div className="space-y-8">
-                {habitaciones.map((habitacion, index) => (
+                {habitacionesUnicasPorTipo.map((habitacion, index) => (
                   <div
                     key={habitacion.id}
                     className="opacity-0 animate-fade-in-up"

@@ -1,117 +1,31 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Image, Plus, Search } from "lucide-react"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { AdminFooter } from "@/components/admin/admin-footer"
-import { AdminSidebar } from "@/components/admin/admin-sidebar"
-import { UserWelcome } from "@/components/admin/user-welcome"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { PublicidadList } from "@/components/admin/publicidad/publicidad-list"
-import { PublicidadForm } from "@/components/admin/publicidad/publicidad-form"
-
-// Tipo para los datos de publicidad
-export interface Publicidad {
-  id: string
-  titulo: string
-  imagenUrl: string
-  linkDestino: string
-  activa: boolean
-  fechaCreacion: string
-  ubicacion: "home" | "reservas" | "facilidades" | "todas"
-}
-
-// Datos de ejemplo para publicidades
-const publicidadesIniciales: Publicidad[] = [
-  {
-    id: "pub-1",
-    titulo: "Oferta Especial Verano",
-    imagenUrl: "/placeholder.svg?height=300&width=500",
-    linkDestino: "https://ejemplo.com/oferta-verano",
-    activa: true,
-    fechaCreacion: "2023-05-15",
-    ubicacion: "home",
-  },
-  {
-    id: "pub-2",
-    titulo: "Descuento en Reservas Anticipadas",
-    imagenUrl: "/placeholder.svg?height=300&width=500",
-    linkDestino: "https://ejemplo.com/reservas-anticipadas",
-    activa: true,
-    fechaCreacion: "2023-06-20",
-    ubicacion: "reservas",
-  },
-  {
-    id: "pub-3",
-    titulo: "Promoción Fin de Semana",
-    imagenUrl: "/placeholder.svg?height=300&width=500",
-    linkDestino: "https://ejemplo.com/promo-finde",
-    activa: false,
-    fechaCreacion: "2023-07-10",
-    ubicacion: "todas",
-  },
-]
+import { Image, Plus, Search } from "lucide-react";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { AdminFooter } from "@/components/admin/admin-footer";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { UserWelcome } from "@/components/admin/user-welcome";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PublicidadList } from "@/components/admin/publicidad/publicidad-list";
+import { PublicidadForm } from "@/components/admin/publicidad/publicidad-form";
+import { useAdminPublicidad } from "@/hooks/use-admin-publicidad";
 
 export default function PublicidadPage() {
-  const [username] = useState("USUARIO")
-  const [publicidades, setPublicidades] = useState<Publicidad[]>(publicidadesIniciales)
-  const [showForm, setShowForm] = useState(false)
-  const [currentPublicidad, setCurrentPublicidad] = useState<Publicidad | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
-
-  // Filtrar publicidades según el término de búsqueda
-  const filteredPublicidades = publicidades.filter(
-    (pub) =>
-      pub.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pub.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
-
-  // Manejar creación de nueva publicidad
-  const handleAddNew = () => {
-    setCurrentPublicidad(null)
-    setShowForm(true)
-  }
-
-  // Manejar edición de publicidad existente
-  const handleEdit = (publicidad: Publicidad) => {
-    setCurrentPublicidad(publicidad)
-    setShowForm(true)
-  }
-
-  // Manejar eliminación de publicidad
-  const handleDelete = (id: string) => {
-    if (window.confirm("¿Está seguro que desea eliminar esta publicidad?")) {
-      setPublicidades(publicidades.filter((pub) => pub.id !== id))
-    }
-  }
-
-  // Manejar cambio de estado (activa/inactiva)
-  const handleToggleActive = (id: string) => {
-    setPublicidades(publicidades.map((pub) => (pub.id === id ? { ...pub, activa: !pub.activa } : pub)))
-  }
-
-  // Manejar guardado de publicidad (nueva o editada)
-  const handleSave = (publicidad: Publicidad) => {
-    if (currentPublicidad) {
-      // Actualizar existente
-      setPublicidades(publicidades.map((pub) => (pub.id === publicidad.id ? publicidad : pub)))
-    } else {
-      // Crear nueva
-      const newPublicidad = {
-        ...publicidad,
-        id: `pub-${Date.now()}`,
-        fechaCreacion: new Date().toISOString().split("T")[0],
-      }
-      setPublicidades([...publicidades, newPublicidad])
-    }
-    setShowForm(false)
-  }
-
-  // Manejar cancelación del formulario
-  const handleCancel = () => {
-    setShowForm(false)
-  }
+  const {
+    username,
+    showForm,
+    currentPublicidad,
+    searchTerm,
+    filteredPublicidades,
+    handleAddNew,
+    handleEdit,
+    handleDelete,
+    handleToggleActive,
+    handleSave,
+    handleCancel,
+    setSearchTerm,
+  } = useAdminPublicidad();
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -179,6 +93,5 @@ export default function PublicidadPage() {
 
       <AdminFooter />
     </div>
-  )
+  );
 }
-

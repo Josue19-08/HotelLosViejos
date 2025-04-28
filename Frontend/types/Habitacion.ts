@@ -9,7 +9,22 @@ export interface HabitacionBase {
   numero: number;
   tarifaDiariaBase: number;
   nombreImagen: string;
-  tipo: "ESTANDAR" | "JUNIOR";
-  estado: "LIBRE" | "OCUPADA" | "LIMPIEZA" | "DESHABILITADA";
+  tipo: string;
+  estado: string;
   caracteristicas: Caracteristica[];
 }
+
+
+export interface Habitacion {
+  id: number;
+  numero: number;
+  tarifaDiariaBase: number;
+  nombreImagen: string;
+  tipo: string;
+  estado: string;
+  caracteristicasIds: number[];
+}
+
+export interface HabitacionRegistro extends Omit<Habitacion, "id"> {}
+
+export interface HabitacionActualizacion extends Omit<Habitacion, "id"> {}

@@ -25,7 +25,6 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-6 border rounded-md min-h-[400px]">
             <h1 className="text-2xl font-playfair font-bold text-teal-800 mb-6">Módulo Administrativo</h1>
 
-            {/* Contenido del dashboard */}
             <div className="p-4 bg-gray-50 rounded-md text-gray-500 text-center">
               Seleccione una opción del menú para comenzar
             </div>
