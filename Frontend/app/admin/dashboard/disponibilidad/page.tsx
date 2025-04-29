@@ -1,30 +1,31 @@
-"use client";
+"use client"
 
-import { Image, Plus, Search } from "lucide-react";
-import { AdminHeader } from "@/components/admin/admin-header";
-import { AdminFooter } from "@/components/admin/admin-footer";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
-import { UserWelcome } from "@/components/admin/user-welcome";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PublicidadList } from "@/components/admin/publicidad/publicidad-list";
-import { PublicidadForm } from "@/components/admin/publicidad/publicidad-form";
-import { useDisponibilidad } from "@/hooks/use-admin-disponibilidad";
+import { Search } from "lucide-react"
+import { AdminHeader } from "@/components/admin/admin-header"
+import { AdminFooter } from "@/components/admin/admin-footer"
+import { AdminSidebar } from "@/components/admin/admin-sidebar"
+import { UserWelcome } from "@/components/admin/user-welcome"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useDisponibilidad } from "@/hooks/use-admin-disponibilidad"
+import { DatePicker } from "@/components/admin/disponibilidad/date-picker"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 
-export default function PublicidadPage() {
+export default function ConsultarDisponibilidadPage() {
   const {
     username,
-    publicidades,
-    showForm,
-    currentPublicidad,
-    searchTerm,
-    setSearchTerm,
-    handleAddNew,
-    handleEdit,
-    handleDelete,
-    handleSave,
-    handleCancel,
-  } = useDisponibilidad();
+    results,
+    isLoading,
+    fechaLlegada,
+    setFechaLlegada,
+    fechaSalida,
+    setFechaSalida,
+    tipoHabitacion,
+    setTipoHabitacion,
+    handleConsultar,
+  } = useDisponibilidad()
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -40,52 +41,124 @@ export default function PublicidadPage() {
           <AdminSidebar />
 
           <div className="space-y-6">
-            {showForm ? (
-              <Card className="p-6 border rounded-md">
-                <div className="flex items-center gap-3 mb-6">
-                  <Image className="h-6 w-6 text-teal-600" />
-                  <h1 className="text-2xl font-playfair font-bold text-teal-800">
-                    {currentPublicidad ? "Editar Publicidad" : "Nueva Publicidad"}
-                  </h1>
-                </div>
+            <Card className="p-6 border rounded-md">
+              <div className="flex items-center gap-3 mb-8">
+                <Search className="h-6 w-6 text-teal-600" />
+                <h1 className="text-2xl font-playfair font-bold text-teal-800">
+                  Consultar Disponibilidad de Habitaciones
+                </h1>
+              </div>
 
-                <PublicidadForm publicidad={currentPublicidad} onSave={handleSave} onCancel={handleCancel} />
-              </Card>
-            ) : (
-              <Card className="p-6 border rounded-md">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <Image className="h-6 w-6 text-teal-600" />
-                    <h1 className="text-2xl font-playfair font-bold text-teal-800">Administrar Publicidad</h1>
+              {/* Formulario simplificado similar a la imagen */}
+              <div className="max-w-3xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                  <div className="space-y-2">
+                    <Label htmlFor="fechaLlegada">Fecha Llegada:</Label>
+                    <DatePicker id="fechaLlegada" date={fechaLlegada} onDateChange={setFechaLlegada} />
                   </div>
 
-                  <Button onClick={handleAddNew} className="bg-teal-600 hover:bg-teal-700 flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    Nueva Publicidad
-                  </Button>
-                </div>
-
-                <div className="mb-6">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <input
-                      type="text"
-                      placeholder="Buscar publicidad..."
-                      className="pl-10 pr-4 py-2 w-full border rounded-md"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                  <div className="space-y-2">
+                    <Label htmlFor="fechaSalida">Fecha Salida:</Label>
+                    <DatePicker
+                      id="fechaSalida"
+                      date={fechaSalida}
+                      onDateChange={setFechaSalida}
+                      minDate={new Date(fechaLlegada.getTime() + 86400000)} // Mínimo un día después de la llegada
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="tipoHabitacion">Tipo de Habitación</Label>
+                    <Select value={tipoHabitacion} onValueChange={setTipoHabitacion}>
+                      <SelectTrigger id="tipoHabitacion">
+                        <SelectValue placeholder="Tipo de Habitación" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas</SelectItem>
+                        <SelectItem value="standard">Standard</SelectItem>
+                        <SelectItem value="junior">Junior</SelectItem>
+                        <SelectItem value="deluxe">Deluxe</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                <PublicidadList publicidades={publicidades} onEdit={handleEdit} onDelete={handleDelete} />
-              </Card>
-            )}
+                <div className="flex justify-center mt-8">
+                  <Button
+                    onClick={handleConsultar}
+                    disabled={isLoading}
+                    className="bg-gray-500 hover:bg-gray-600 rounded-md px-6"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center">
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Consultando...
+                      </div>
+                    ) : (
+                      "Consultar"
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Resultados simplificados */}
+              {results && (
+                <div className="mt-8">
+                  <div className="border rounded-md overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Número de Habitación</TableHead>
+                          <TableHead>Tipo</TableHead>
+                          <TableHead>Costo Estadía</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {results.length > 0 ? (
+                          results.map((room) => (
+                            <TableRow key={room.numero}>
+                              <TableCell>{room.numero}</TableCell>
+                              <TableCell>{room.tipo}</TableCell>
+                              <TableCell>{room.costo}</TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                              No se encontraron habitaciones disponibles con los criterios seleccionados.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              )}
+            </Card>
           </div>
         </div>
       </main>
 
       <AdminFooter />
     </div>
-  );
+  )
 }
