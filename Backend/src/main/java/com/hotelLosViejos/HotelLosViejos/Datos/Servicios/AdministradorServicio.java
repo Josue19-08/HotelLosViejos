@@ -46,8 +46,7 @@ public class AdministradorServicio implements IAdministrador {
 
         try {
 
-            Administrador administradorEncontrado = this.administradorRepositorio.
-                    findById(administradorNuevo.getId()).orElseThrow( () -> new Exception("no se concentric"));
+            Administrador administradorEncontrado = this.administradorRepositorio.findById(administradorNuevo.getId()).orElseThrow( () -> new Exception("no se concentric"));
 
             administradorEncontrado = administradorNuevo;
 
