@@ -134,6 +134,7 @@ export default function ConsultarDisponibilidadPage() {
                       </TableHeader>
                       <TableBody>
                         {results.length > 0 ? (
+
                           results.map((room) => (
                            <TableRow key={`${room.numeroHabitacion}-${room.tipoHabitacion}`}>
                               <TableCell>{room.numeroHabitacion}</TableCell>
