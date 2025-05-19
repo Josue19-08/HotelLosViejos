@@ -8,7 +8,8 @@ import { UserWelcome } from "@/components/admin/user-welcome"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useDisponibilidad } from "@/hooks/use-admin-disponibilidad"
+import { useDisponibilidad } from "@/hooks/use-disponibilidad";
+
 import { DatePicker } from "@/components/admin/disponibilidad/date-picker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
@@ -75,9 +76,8 @@ export default function ConsultarDisponibilidadPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Todas</SelectItem>
-                        <SelectItem value="standard">Standard</SelectItem>
-                        <SelectItem value="junior">Junior</SelectItem>
-                        <SelectItem value="deluxe">Deluxe</SelectItem>
+                        <SelectItem value="ESTANDAR">Estandar</SelectItem>
+                        <SelectItem value="JUNIOR">Junior</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -135,10 +135,12 @@ export default function ConsultarDisponibilidadPage() {
                       <TableBody>
                         {results.length > 0 ? (
                           results.map((room) => (
-                            <TableRow key={room.numero}>
-                              <TableCell>{room.numero}</TableCell>
-                              <TableCell>{room.tipo}</TableCell>
-                              <TableCell>{room.costo}</TableCell>
+                           <TableRow key={`${room.numeroHabitacion}-${room.tipoHabitacion}`}>
+                              <TableCell>{room.numeroHabitacion}</TableCell>
+                              <TableCell>{room.tipoHabitacion}</TableCell>
+                            <TableCell>${room.costoEstadia}</TableCell>
+
+
                             </TableRow>
                           ))
                         ) : (
