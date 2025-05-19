@@ -36,7 +36,7 @@ export function ReservationForm() {
 
   // Campos para el segundo paso
   const { crearReserva } = useReserva();
-  const habitaciones = useHabitacion();
+ const { habitaciones } = useHabitacion();
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
