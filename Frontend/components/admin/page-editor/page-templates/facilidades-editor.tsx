@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ImageEditor } from "../image-editor"
 import { Button } from "@/components/ui/button"
-import { Plus, MoveUp, MoveDown, Trash2  } from "lucide-react";
+import { Plus, MoveUp, MoveDown, Trash2, Save  } from "lucide-react";
 
 
 
