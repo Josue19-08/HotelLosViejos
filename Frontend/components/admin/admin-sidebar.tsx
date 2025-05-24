@@ -3,7 +3,7 @@
 import type React from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Home, FileEdit, CalendarCheck, Hotel, BarChart, Search, Image } from "lucide-react"
+import { Home, FileEdit, CalendarCheck, Hotel, BarChart, Search, Image, Percent } from "lucide-react"
 
 interface NavItemProps {
   href: string
@@ -24,6 +24,7 @@ const menuItems = [
     icon: <Search size={18} />,
   },
   { label: "Publicidad", href: "/admin/dashboard/publicidad", icon: <Image size={18} /> },
+  { label: "Ofertas y Temporadas", href: "/admin/dashboard/ofertas", icon: <Percent size={18} /> },
 ]
 
 export function AdminSidebar() {
