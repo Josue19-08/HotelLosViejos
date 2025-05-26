@@ -16,8 +16,14 @@ import { PersonalInfoForm } from "./personal-info-form";
 import { RoomDetail } from "./room-detail";
 import { ConfirmationMessage } from "./confirmation-message";
 import { AlertMessage } from "../alert";
+import { useTemporadaStore } from "@/lib/seasonData"
+import { useOferta } from "@/hooks/use-ofertas";
+
 
 export function ReservationForm() {
+
+  const { altaPercentage, bajaPercentage } = useTemporadaStore()
+  const { offers } = useOferta();
   const [checkInDate, setCheckInDate] = useState<Date | undefined>(undefined);
   const [checkOutDate, setCheckOutDate] = useState<Date | undefined>(undefined);
   const [roomType, setRoomType] = useState<string>("");
@@ -60,31 +66,83 @@ export function ReservationForm() {
     setFormattedCreditCard(formatted);
   };
 
-  // Calcular noches y precio total cuando cambian las fechas o el tipo de habitación
-  useEffect(() => {
-    if (checkInDate && checkOutDate) {
-      const nightsCount = differenceInDays(checkOutDate, checkInDate);
-      setNights(nightsCount);
+  const [appliedOffer, setAppliedOffer] = useState<{ title: string; percentage: number } | null>(null);
+useEffect(() => {
+  if (checkInDate && checkOutDate) {
+    const nightsCount = differenceInDays(checkOutDate, checkInDate);
+    setNights(nightsCount);
 
-      if (roomType && nightsCount > 0) {
-        const room = habitaciones.find((h) => h.id.toString() === roomType);
-        if (room) {
-          setSelectedRoom(room);
-          setTotalPrice(room.tarifaDiariaBase * nightsCount);
+    if (roomType && nightsCount > 0) {
+      const room = habitaciones.find((h) => h.id.toString() === roomType);
+      if (room) {
+        setSelectedRoom(room);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const checkIn = new Date(checkInDate);
+        checkIn.setHours(0, 0, 0, 0);
+
+        // Detectar mes de llegada
+        const month = checkIn.getMonth() + 1;
+        const isTemporadaAlta = [4, 7, 8, 12].includes(month);
+        const esFuturo = checkIn > today;
+
+        const temporadaPercentage = isTemporadaAlta && esFuturo ? altaPercentage : bajaPercentage;
+
+        // Buscar oferta aplicable dentro del rango de fechas
+        const ofertaAplicable = offers.find((offer) => {
+          if (!offer.aplica) return false;
+
+          const aplicaTipo = offer.aplica.toLowerCase();
+          const roomTipo = room.tipo.toLowerCase();
+          const aplicaHabitacion = aplicaTipo === "todas" || aplicaTipo === roomTipo;
+
+         const normalizarFecha = (fecha: Date) => {
+           const f = new Date(fecha);
+           f.setHours(0, 0, 0, 0);
+           return f;
+         };
+
+         const fechaInicio = offer.fechaInicio ? normalizarFecha(new Date(offer.fechaInicio)) : null;
+         const fechaFin = offer.fechaFin ? normalizarFecha(new Date(offer.fechaFin)) : null;
+
+         const checkIn = normalizarFecha(new Date(checkInDate));
+         const checkOut = normalizarFecha(new Date(checkOutDate));
+
+         // Verifica que el check-in y check-out estén dentro del rango
+         const dentroRango =
+           fechaInicio && fechaFin &&
+           checkIn >= fechaInicio &&
+           checkOut <= fechaFin;
+
+
+          return aplicaHabitacion && dentroRango;
+        });
+
+        const basePrice = room.tarifaDiariaBase + (room.tarifaDiariaBase * (temporadaPercentage / 100));
+
+        if (ofertaAplicable && ofertaAplicable.porcentaje) {
+          const discountPercentage = parseFloat(ofertaAplicable.porcentaje);
+          const priceWithDiscount = basePrice - (basePrice * (discountPercentage / 100));
+          setTotalPrice(priceWithDiscount * nightsCount);
+          setAppliedOffer({ title: ofertaAplicable.titulo, percentage: discountPercentage });
+        } else {
+          setTotalPrice(basePrice * nightsCount);
+          setAppliedOffer(null);
         }
       }
-
-      const month = new Date().getMonth() + 1;
-
-      if ([4, 7, 8, 12].includes(month)) { // Temporadas alta
-        setTotalPrice((prev) => prev * 1.2); 
-      }
-
     } else {
       setNights(0);
       setTotalPrice(0);
+      setAppliedOffer(null);
     }
-  }, [checkInDate, checkOutDate, roomType, habitaciones]);
+  } else {
+    setNights(0);
+    setTotalPrice(0);
+    setAppliedOffer(null);
+    setSelectedRoom(null);
+  }
+}, [checkInDate, checkOutDate, roomType, habitaciones, altaPercentage, bajaPercentage, offers]);
 
   const handleFirstStep = (e: React.FormEvent) => {
     e.preventDefault();
@@ -250,6 +308,14 @@ export function ReservationForm() {
                 onRoomTypeChange={setRoomType}
                 habitaciones={habitaciones}
               />
+
+
+              {appliedOffer && (
+                <div className="mt-3 p-3 bg-green-100 text-green-800 rounded">
+                  Oferta: <strong>{appliedOffer.title}</strong> -{" "}
+                  {appliedOffer.percentage}% de descuento aplicado.
+                </div>
+              )}
 
               <div className="flex justify-center pt-4">
                 <Button
