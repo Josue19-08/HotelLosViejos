@@ -8,14 +8,15 @@ export interface Offer {
 }
 
 export function useAdminOfertas() {
-  const [altaPercentage, setAltaPercentage] = useState("")
-  const [bajaPercentage, setBajaPercentage] = useState("")
   const [newOfferDescription, setNewOfferDescription] = useState("")
   const [newOfferPercentage, setNewOfferPercentage] = useState("")
   const [newOfferApplies, setNewOfferApplies] = useState("")
   const [offers, setOffers] = useState<Offer[]>([
     { id: 1, description: "", percentage: "", applies: "Todas, estándar, junior" },
   ])
+  const [newOfferStartDate, setNewOfferStartDate] = useState<Date | undefined>(undefined)
+  const [newOfferEndDate, setNewOfferEndDate] = useState<Date | undefined>(undefined)
+
 
   const addOffer = () => {
     if (newOfferDescription && newOfferPercentage) {
@@ -26,11 +27,15 @@ export function useAdminOfertas() {
           description: newOfferDescription,
           percentage: newOfferPercentage,
           applies: newOfferApplies || "Todas, estándar, junior",
+          startDate: newOfferStartDate,
+          endDate: newOfferEndDate,
         },
       ])
       setNewOfferDescription("")
       setNewOfferPercentage("")
       setNewOfferApplies("")
+      setNewOfferStartDate(undefined)
+      setNewOfferEndDate(undefined)
     }
   }
 
@@ -47,10 +52,6 @@ export function useAdminOfertas() {
   }
 
   return {
-    altaPercentage,
-    bajaPercentage,
-    setAltaPercentage,
-    setBajaPercentage,
     newOfferDescription,
     setNewOfferDescription,
     newOfferPercentage,
