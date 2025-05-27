@@ -1,195 +1,74 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { ImageEditor } from "../image-editor"
 import { Button } from "@/components/ui/button"
-import { Plus, MoveUp, MoveDown, Trash2  } from "lucide-react";
+import { ImageEditor } from "../image-editor"
+import { MoveUp, MoveDown, Trash2, Save, Plus } from "lucide-react"
 
+import { useFacilidadesEditor } from "@/hooks/use-facilidades-editor"
 
-
-import { updateFacilities, registerFacilities } from "@/lib/FacilidadData"
-import { v4 as uuidv4 } from "uuid";
-import { useFacilidad } from "@/hooks/use-facilidades"
-import { FacilidadBase } from "@/types/Facilidad"
-interface FacilidadesData {
-  facilidades: FacilidadBase[]
-}
-
-export function FacilidadesEditor({ onChange }: { onChange?: (data: FacilidadesData) => void }) {
-
-  const { facilidades } = useFacilidad();
-  const [data, setData] = useState<FacilidadesData>({ facilidades: [] })
-  const [isSaving, setIsSaving] = useState(false)
-
-    useEffect(() => {
-        // Asegúrate de que 'facilidades' no sea undefined o vacío antes de actualizar el estado
-        if (facilidades && facilidades.length > 0 && data.facilidades.length === 0) {
-          setData({ facilidades });
-        }
-    }, [facilidades]);
-
-const handleSave = async (index: number) => {
-  setIsSaving(true);
-  const facilidad = data.facilidades[index];
-
-  try {
-    // Si no tiene `id`, es una facilidad nueva
-    if (!facilidad.id) {
-      const newFacilidad = { ...facilidad };
-      delete newFacilidad._uuid; // No enviar _uuid al backend
-      const result = await registerFacilities(newFacilidad);
-
-      alert("Facilidad registrada con éxito");
-    } else {
-      // Tiene un ID real de base de datos => actualizar
-      await updateFacilities(facilidad);
-      alert("Cambios guardados con éxito");
-    }
-  } catch (error) {
-    console.error("Error al guardar cambios:", error);
-    alert("Error al guardar cambios");
-  }
-
-  setIsSaving(false);
-  window.location.reload();
-};
-
-
-
-
-
-const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value: string) => {
-    const newFacilidades = [...data.facilidades]
-    newFacilidades[index] = { ...newFacilidades[index], [field]: value }
-
-    const newData = { ...data, facilidades: newFacilidades }
-    setData(newData)
-  }
-
-  const handleAddFacilidad = () => {
-    const newFacilidad: Facilidad = {
-      id: Date.now().toString(),
-      nombre: "",
-      descripcion: "",
-      imagen: "/placeholder.svg?height=300&width=400",
-    }
-
-    const newData = {
-
-          ...data,
-          facilidades: [...data.facilidades, newFacilidad],
-        };
-
-    setData((prev) => ({
-        ...prev,
-        facilidades: [...prev.facilidades, newFacilidad],
-      }));
-    onChange(newData)
-
-  }
-
-  const handleRemoveFacilidad = (index: number) => {
-    const newFacilidades = [...data.facilidades]
-    newFacilidades.splice(index, 1)
-
-    const newData = { ...data, facilidades: newFacilidades }
-    setData(newData)
-    onChange(newData)
-  }
-
-  const moveFacilidad = (index: number, direction: "up" | "down") => {
-    if ((direction === "up" && index === 0) || (direction === "down" && index === data.facilidades.length - 1)) {
-      return
-    }
-
-    const newIndex = direction === "up" ? index - 1 : index + 1
-    const newFacilidades = [...data.facilidades]
-    const temp = newFacilidades[index]
-    newFacilidades[index] = newFacilidades[newIndex]
-    newFacilidades[newIndex] = temp
-
-    const newData = { ...data, facilidades: newFacilidades }
-    setData(newData)
-    onChange(newData)
-  }
+export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void }) {
+  const {
+    facilidades,
+    isSaving,
+    handleChange,
+    handleAdd,
+    handleRemove,
+    handleReorder,
+    handleSave,
+  } = useFacilidadesEditor(onChange)
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium text-gray-800">Facilidades del hotel</h2>
-        <Button
-          type="button"
-          onClick={handleAddFacilidad}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-1"
-        >
+        <Button onClick={handleAdd} variant="outline" size="sm" className="flex items-center gap-1">
           <Plus size={16} />
           Agregar facilidad
         </Button>
       </div>
 
-      {data.facilidades.length === 0 ? (
+      {/* Si está vacío */}
+      {facilidades.length === 0 ? (
         <div className="text-center py-8 border rounded-md bg-gray-50">
           <p className="text-gray-500">No hay facilidades agregadas</p>
-          <Button
-            type="button"
-            onClick={handleAddFacilidad}
-            variant="outline"
-            size="sm"
-            className="mt-2 flex items-center gap-1 mx-auto"
-          >
+          <Button onClick={handleAdd} variant="outline" size="sm" className="mt-2 flex items-center gap-1 mx-auto">
             <Plus size={16} />
             Agregar facilidad
           </Button>
         </div>
       ) : (
         <div className="space-y-6">
-
-          {data.facilidades.map((facilidad, index) => (
+          {facilidades.map((facilidad, i) => (
             <div key={facilidad.id || facilidad._uuid} className="border rounded-md p-4 relative">
+              {/* Acciones arriba */}
               <div className="absolute top-2 right-2 flex space-x-1">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-gray-500 hover:text-blue-500"
-                  onClick={() => moveFacilidad(index, "up")}
-                  disabled={index === 0}
-                >
+                <Button onClick={() => handleReorder(i, "up")} disabled={i === 0} variant="ghost" size="icon">
                   <MoveUp size={16} />
                 </Button>
                 <Button
-                  type="button"
+                  onClick={() => handleReorder(i, "down")}
+                  disabled={i === facilidades.length - 1}
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 text-gray-500 hover:text-blue-500"
-                  onClick={() => moveFacilidad(index, "down")}
-                  disabled={index === data.facilidades.length - 1}
                 >
                   <MoveDown size={16} />
                 </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-gray-500 hover:text-red-500"
-                  onClick={() => handleRemoveFacilidad(index)}
-                >
+                <Button onClick={() => handleRemove(i)} variant="ghost" size="icon">
                   <Trash2 size={16} />
                 </Button>
               </div>
 
+              {/* Campos */}
               <div className="space-y-4 pt-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la facilidad</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                   <Input
                     value={facilidad.titulo}
-                    onChange={(e) => handleFacilidadChange(index, "titulo", e.target.value)}
-                    className="w-full"
-                    placeholder="Ej: Piscina Infinita, Restaurante, Spa..."
+                    onChange={(e) => handleChange(i, "titulo", e.target.value)}
+                    placeholder="Ej: Spa, Piscina..."
                   />
                 </div>
 
@@ -197,17 +76,16 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
                   <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
                   <Textarea
                     value={facilidad.descripcion}
-                    onChange={(e) => handleFacilidadChange(index, "descripcion", e.target.value)}
+                    onChange={(e) => handleChange(i, "descripcion", e.target.value)}
                     rows={4}
-                    className="w-full"
-                    placeholder="Describa los detalles y características de esta facilidad..."
+                    placeholder="Describa esta facilidad"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Imagen</label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="border rounded-md overflow-hidden bg-gray-50 flex items-center justify-center h-[200px]">
+                    <div className="border rounded-md bg-gray-50 flex items-center justify-center h-[200px]">
                       <img
                         src={facilidad.nombreImagen || "/placeholder.svg"}
                         alt={facilidad.titulo}
@@ -217,50 +95,41 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
                     <div>
                       <ImageEditor
                         compact
-
                         currentImageUrl={facilidad.nombreImagen}
-                        onImageChange={(url) => handleFacilidadChange(index, "nombreImagen", url)}
+                        onImageChange={(url) => handleChange(i, "nombreImagen", url)}
                       />
                     </div>
 
-                   <Button
-                     type="button"
-                     onClick={() => handleSave(index)}
-                     disabled={isSaving}
-                     className="mt-4 bg-teal-600 hover:bg-teal-700 flex items-center gap-2 text-white"
-                   >
-                     {isSaving ? (
-                       <>
-                         <svg
-                           className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                           xmlns="http://www.w3.org/2000/svg"
-                           fill="none"
-                           viewBox="0 0 24 24"
-                         >
-                           <circle
-                             className="opacity-25"
-                             cx="12"
-                             cy="12"
-                             r="10"
-                             stroke="currentColor"
-                             strokeWidth="4"
-                           ></circle>
-                           <path
-                             className="opacity-75"
-                             fill="currentColor"
-                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                           ></path>
-                         </svg>
-                         Guardando...
-                       </>
-                     ) : (
-                       <>
-                         <Save size={16} />
-                         Guardar cambios
-                       </>
-                     )}
-                   </Button>
-
+                    <Button
+                      type="button"
+                      onClick={() => handleSave(i)}
+                      disabled={isSaving}
+                      className="mt-4 bg-teal-600 hover:bg-teal-700 flex items-center gap-2 text-white"
+                    >
+                      {isSaving ? (
+                        <>
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+                            <path
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291..."
+                              className="opacity-75"
+                            />
+                          </svg>
+                          Guardando...
+                        </>
+                      ) : (
+                        <>
+                          <Save size={16} />
+                          Guardar cambios
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -271,4 +140,3 @@ const handleFacilidadChange = (index: number, field: keyof FacilidadBase, value:
     </div>
   )
 }
-

@@ -1,58 +1,31 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect } from "react"
+import { usePublicidadForm } from "@/hooks/use-publicidad-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Save, X, Upload, ExternalLink } from "lucide-react"
-import type { Publicidad } from "@/app/admin/dashboard/publicidad/page"
+import type { PublicidadBase } from "@/types/Publicidad"
+
 
 interface PublicidadFormProps {
-  publicidad: Publicidad | null
-  onSave: (publicidad: Publicidad) => void
+  publicidad: PublicidadBase | null
+  onSave: (publicidad: PublicidadBase) => void
   onCancel: () => void
 }
 
 export function PublicidadForm({ publicidad, onSave, onCancel }: PublicidadFormProps) {
-  // Estado inicial para el formulario
-  const [formData, setFormData] = useState<Publicidad>({
-    id: "",
-    titulo: "",
-    imagenUrl: "/placeholder.svg?height=300&width=500",
-    linkDestino: "",
-  })
+  const {
+    formData,
+    previewUrl,
+    handleChange,
+    handleApplyImage,
+  } = usePublicidadForm(publicidad)
 
-  // Cargar datos si estamos editando
-  useEffect(() => {
-    if (publicidad) {
-      setFormData(publicidad)
-    }
-  }, [publicidad])
-
-  // Manejar cambios en los campos
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  // Manejar envío del formulario
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSave(formData)
-  }
-
-  // Previsualizar la imagen
-  const [previewUrl, setPreviewUrl] = useState(formData.imagenUrl)
-
-  useEffect(() => {
-    setPreviewUrl(formData.imagenUrl)
-  }, [formData.imagenUrl])
-
-  // Aplicar URL de imagen
-  const handleApplyImage = () => {
-    setPreviewUrl(formData.imagenUrl)
   }
 
   return (
@@ -78,7 +51,7 @@ export function PublicidadForm({ publicidad, onSave, onCancel }: PublicidadFormP
               <Input
                 id="linkDestino"
                 name="linkDestino"
-                value={formData.linkDestino}
+                value={formData.enlace}
                 onChange={handleChange}
                 placeholder="https://ejemplo.com/oferta"
                 className="flex-1"
@@ -88,8 +61,8 @@ export function PublicidadForm({ publicidad, onSave, onCancel }: PublicidadFormP
                 type="button"
                 variant="outline"
                 className="ml-2"
-                onClick={() => window.open(formData.linkDestino, "_blank")}
-                disabled={!formData.linkDestino}
+                onClick={() => window.open(formData.enlace, "_blank")}
+                disabled={!formData.enlace}
               >
                 <ExternalLink className="h-4 w-4" />
               </Button>
@@ -112,7 +85,7 @@ export function PublicidadForm({ publicidad, onSave, onCancel }: PublicidadFormP
                 <Input
                   id="imagenUrl"
                   name="imagenUrl"
-                  value={formData.imagenUrl}
+                  value={formData.imagen}
                   onChange={handleChange}
                   placeholder="https://ejemplo.com/imagen.jpg"
                   className="flex-1"
@@ -141,4 +114,3 @@ export function PublicidadForm({ publicidad, onSave, onCancel }: PublicidadFormP
     </form>
   )
 }
-

@@ -1,68 +1,59 @@
-import { useState } from "react";
+"use client"
 
-// Tipo para los datos de publicidad
-export interface Publicidad {
-  id: string;
-  titulo: string;
-  imagenUrl: string;
-  linkDestino: string;
+import { useState } from "react"
+
+// Tipos para los resultados de disponibilidad
+export interface DisponibilidadResult {
+  numero: number
+  tipo: string
+  costo: string
 }
 
 export function useDisponibilidad() {
-  const [username] = useState("USUARIO");
-  const [publicidades, setPublicidades] = useState<Publicidad[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [currentPublicidad, setCurrentPublicidad] = useState<Publicidad | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [username] = useState("USUARIO")
+  const [results, setResults] = useState<DisponibilidadResult[] | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [fechaLlegada, setFechaLlegada] = useState<Date>(new Date())
+  const [fechaSalida, setFechaSalida] = useState<Date>(() => {
+    const date = new Date()
+    date.setDate(date.getDate() + 3)
+    return date
+  })
+  const [tipoHabitacion, setTipoHabitacion] = useState("")
 
-  const filteredPublicidades = publicidades.filter((pub) =>
-    pub.titulo.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Manejar consulta
+  const handleConsultar = () => {
+    setIsLoading(true)
 
-  const handleAddNew = () => {
-    setCurrentPublicidad(null);
-    setShowForm(true);
-  };
+    // Simulación de consulta
+    setTimeout(() => {
+      // Generar resultados de ejemplo basados en el tipo seleccionado
+      let resultadosEjemplo: DisponibilidadResult[] = [
+        { numero: 1, tipo: "Standard", costo: "$120" },
+        { numero: 5, tipo: "Junior", costo: "$180" },
+        { numero: 8, tipo: "Deluxe", costo: "$250" },
+      ]
 
-  const handleEdit = (publicidad: Publicidad) => {
-    setCurrentPublicidad(publicidad);
-    setShowForm(true);
-  };
+      // Filtrar por tipo de habitación si se seleccionó uno
+      if (tipoHabitacion && tipoHabitacion !== "all") {
+        resultadosEjemplo = resultadosEjemplo.filter((r) => r.tipo.toLowerCase() === tipoHabitacion.toLowerCase())
+      }
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("¿Está seguro que desea eliminar esta publicidad?")) {
-      setPublicidades(publicidades.filter((pub) => pub.id !== id));
-    }
-  };
-
-  const handleSave = (publicidad: Publicidad) => {
-    if (currentPublicidad) {
-      setPublicidades(publicidades.map((pub) => (pub.id === publicidad.id ? publicidad : pub)));
-    } else {
-      const newPublicidad = {
-        ...publicidad,
-        id: `pub-${Date.now()}`,
-      };
-      setPublicidades([...publicidades, newPublicidad]);
-    }
-    setShowForm(false);
-  };
-
-  const handleCancel = () => {
-    setShowForm(false);
-  };
+      setResults(resultadosEjemplo)
+      setIsLoading(false)
+    }, 1000)
+  }
 
   return {
     username,
-    publicidades: filteredPublicidades,
-    showForm,
-    currentPublicidad,
-    searchTerm,
-    setSearchTerm,
-    handleAddNew,
-    handleEdit,
-    handleDelete,
-    handleSave,
-    handleCancel,
-  };
+    results,
+    isLoading,
+    fechaLlegada,
+    setFechaLlegada,
+    fechaSalida,
+    setFechaSalida,
+    tipoHabitacion,
+    setTipoHabitacion,
+    handleConsultar,
+  }
 }

@@ -132,7 +132,7 @@ export function ComoLlegarPreview({ data }: ComoLlegarPreviewProps) {
 
           {data.instrucciones && (
             <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              
+
             </div>
           )}
         </div>

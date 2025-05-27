@@ -1,17 +1,8 @@
 "use client";
 import React from "react";
-import type React from "react";
 import { useState, use, useEffect } from "react";
 import { InformacionBase } from "@/types/Informacion";
 import { useInformacion } from "@/hooks/use-informacion";
-
-interface HomePageData {
-  titulo: string
-  subtitulo: string
-  descripcionBienvenida: string
-  imagenHero: string
-  imagenPiscina: string
-}
 
 
 export function HomePreview() {

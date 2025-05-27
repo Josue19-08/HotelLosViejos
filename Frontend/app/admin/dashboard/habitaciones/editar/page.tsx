@@ -143,7 +143,7 @@ export default function EditarHabitacionPage() {
                     <option value="">Selecciona un estado</option>
                     <option value="LIBRE">Libre</option>
                     <option value="OCUPADA">Ocupada</option>
-                    <option value="MANTENIMIENTO">En mantenimiento</option>
+
                     <option value="LIMPIEZA">En Limpieza</option>
                     <option value="DESHABILITADA">Deshabilitada</option>
                   </select>
