@@ -6,15 +6,20 @@ import com.hotelLosViejos.HotelLosViejos.Dominio.Administrador;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdministradorServicio implements IAdministrador {
 
     @Autowired
     private final AdministradorRepositorio administradorRepositorio;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public AdministradorServicio(AdministradorRepositorio administradorRepositorio) {
         this.administradorRepositorio = administradorRepositorio;
@@ -30,7 +35,8 @@ public class AdministradorServicio implements IAdministrador {
     public boolean registrarAdministrador(Administrador administrador) {
 
         try {
-
+            String contraseniaHash = this.passwordEncoder.encode(administrador.getContrasenia());
+            administrador.setContrasenia(contraseniaHash);
             this.administradorRepositorio.save(administrador);
             return true;
         } catch (Exception e) {
@@ -69,6 +75,19 @@ public class AdministradorServicio implements IAdministrador {
             return false;
         }
 
+    }
+
+    @Override
+    public boolean autenticarAdmin(Administrador administradorCredenciales) {
+
+        Optional<Administrador> adminOptional = this.administradorRepositorio
+                .findByCorreo(administradorCredenciales.getCorreo());
+
+        if (adminOptional.isEmpty()) return false;
+
+        Administrador admin = adminOptional.get();
+        return passwordEncoder.matches(administradorCredenciales.getContrasenia()
+                , admin.getContrasenia());
     }
 
 
