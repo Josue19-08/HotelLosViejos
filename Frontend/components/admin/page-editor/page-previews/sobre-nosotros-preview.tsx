@@ -1,6 +1,4 @@
 import { useGaleria } from "@/hooks/use-galeria";
-import { useInformacion } from "@/hooks/use-informacion";
-import { InformacionBase } from "@/types/Informacion";
 
 interface ImagenGaleria {
   id: string;
