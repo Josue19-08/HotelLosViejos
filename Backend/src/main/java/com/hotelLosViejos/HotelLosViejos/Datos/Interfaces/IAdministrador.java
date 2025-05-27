@@ -16,4 +16,6 @@ public interface IAdministrador {
 
     public boolean eliminarAdminPorId(int id);
 
+    public boolean autenticarAdmin(Administrador administrador);
+
 }

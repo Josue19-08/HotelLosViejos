@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Lock, User, AlertCircle } from "lucide-react"
+import { login } from "@/lib/AdminData"
 
 export function LoginForm() {
   const router = useRouter()
@@ -27,9 +28,9 @@ export function LoginForm() {
     setIsLoading(true)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)) // Simulación de delay
-
-      if (username === "admin" && password === "admin123") {
+      
+      const resultadoLogin = await login({ correo: username, contrasenia: password });
+      if (resultadoLogin) {
         router.push("/admin/dashboard") // 🎯 Redirección si es correcto
       } else {
         setError("Credenciales incorrectas. Intente nuevamente.")

@@ -2,6 +2,8 @@ package com.hotelLosViejos.HotelLosViejos.Presentacion.Controladores;
 
 import com.hotelLosViejos.HotelLosViejos.Datos.Interfaces.IAdministrador;
 import com.hotelLosViejos.HotelLosViejos.Dominio.Administrador;
+import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Administrador.AdministradorMapperDTO;
+import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Administrador.CredencialesAdministradorDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -40,6 +42,15 @@ public class AdministradorControlador {
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> eliminarAdministrador( @PathVariable int id){
         return ResponseEntity.ok(this.iAdministrador.eliminarAdminPorId(id));
+    }
+
+    @PostMapping("/autenticar")
+    public ResponseEntity<Boolean> autenticarAdmin
+            ( @RequestBody CredencialesAdministradorDTO credencialesAdministradorDTO){
+
+        Administrador administrador = AdministradorMapperDTO.convertirCredencialesAdministradorDTOAAdministrador(credencialesAdministradorDTO);
+
+        return ResponseEntity.ok(this.iAdministrador.autenticarAdmin(administrador));
     }
 
 }
