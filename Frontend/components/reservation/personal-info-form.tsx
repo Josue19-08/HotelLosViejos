@@ -2,12 +2,16 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { AlertMessage } from "../alert"
 import { usePersonalInfoForm } from "@/hooks/use-personal-info-form"
 
 interface Props {
-  onSubmit: (e: React.FormEvent) => void
+  onSubmit: (data: {
+    firstName: string
+    lastName: string
+    email: string
+    creditCard: string
+  }) => void
   onBack: () => void
   isSubmitting: boolean
 }
@@ -22,12 +26,18 @@ export function PersonalInfoForm({ onSubmit, onBack, isSubmitting }: Props) {
     setLastName,
     setEmail,
     handleCreditCardChange,
-    handleFormSubmit,
     alert,
-  } = usePersonalInfoForm({ onSubmit })
+    validateAndSubmit,
+  } = usePersonalInfoForm()
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const isValid = validateAndSubmit((data) => onSubmit(data))
+    if (!isValid) return
+  }
 
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {alert && <AlertMessage type={alert.type} title={alert.title} message={alert.message} />}
 
       <div className="space-y-2">
@@ -62,7 +72,7 @@ export function PersonalInfoForm({ onSubmit, onBack, isSubmitting }: Props) {
           {isSubmitting ? (
             <>
               <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291..." />
               </svg>
               Procesando...
