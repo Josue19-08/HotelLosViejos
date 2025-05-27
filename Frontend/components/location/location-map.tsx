@@ -1,75 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useLocationMap } from "@/hooks/use-location-map"
 
 interface LocationMapProps {
-  address: string,
-  lat: number,
+  address: string
+  lat: number
   lng: number
-
 }
 
 export function LocationMap({ address, lat, lng }: LocationMapProps) {
-  const [isMapLoaded, setIsMapLoaded] = useState(false)
-  const [isLeafletLoaded, setIsLeafletLoaded] = useState(false)
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (!document.getElementById("leaflet-css")) {
-        const link = document.createElement("link")
-        link.id = "leaflet-css"
-        link.rel = "stylesheet"
-        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        link.crossOrigin = ""
-        document.head.appendChild(link)
-      }
-
-      if (!window.L) {
-        const script = document.createElement("script")
-        script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        script.crossOrigin = ""
-        script.async = true
-        script.onload = () => {
-          setIsLeafletLoaded(true)
-        }
-        document.head.appendChild(script)
-      } else {
-        setIsLeafletLoaded(true)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isLeafletLoaded) return
-
-    // Inicializar el mapa
-    const mapContainer = document.getElementById("map-container")
-    if (!mapContainer) return
-
-    // Limpiar el contenedor si ya existe un mapa
-    mapContainer.innerHTML = ""
-
-    // Crear el mapa
-    const map = window.L.map("map-container").setView([Number(lat), Number(lng)], 15)
-
-    // Añadir capa de OpenStreetMap
-    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map)
-
-    // Añadir marcador
-    const marker = window.L.marker([lat, lng]).addTo(map)
-    marker.bindPopup(`<b>Hotel Los Viejos</b><br>${address}`).openPopup()
-
-    setIsMapLoaded(true)
-
-    // Limpiar al desmontar
-    return () => {
-      map.remove()
-    }
-  }, [isLeafletLoaded, lat, lng, address])
+  const { isLeafletLoaded } = useLocationMap(address, lat, lng)
 
   const openGoogleMaps = () => {
     const url = `https://www.google.com/maps?q=${lat},${lng}`
@@ -95,7 +35,7 @@ export function LocationMap({ address, lat, lng }: LocationMapProps) {
 
       <div className="p-4 flex justify-between items-center">
         <p className="text-sm text-gray-500">
-          Coordenadas: {Number(lat).toFixed(6)}, {Number(lat).toFixed(6)}
+          Coordenadas: {Number(lat).toFixed(6)}, {Number(lng).toFixed(6)}
         </p>
         <button
           onClick={openGoogleMaps}
@@ -122,4 +62,3 @@ export function LocationMap({ address, lat, lng }: LocationMapProps) {
     </div>
   )
 }
-
