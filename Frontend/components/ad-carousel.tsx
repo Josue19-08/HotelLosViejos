@@ -5,37 +5,6 @@ import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const ads = [
-  {
-    id: 1,
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-nxsmWbNTJX2BwbHigcTC2hzM1sbwtt.png",
-    alt: "Playa tropical con aguas turquesas",
-    title: "Descubre nuestro paraíso",
-    description: "Disfruta de nuestras playas de ensueño",
-  },
-  {
-    id: 2,
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-N30RG5fSAB0uQgxiOZF94yq7cbZxX1.png",
-    alt: "Publicidad de Heineken",
-    title: "Happy Hour",
-    description: "2x1 en bebidas de 5pm a 7pm",
-  },
-  {
-    id: 3,
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-NTKGCu6mBkymknD1f5eX0txceL42tc.png",
-    alt: "Publicidad de AirPods",
-    title: "Música en la playa",
-    description: "Alquiler de equipos de sonido disponible",
-  },
-  {
-    id: 4,
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-fBwcJMzUmITwndFFyzvwqxQtU8lJOG.png",
-    alt: "Playa con palmeras y sombrillas",
-    title: "Relájate en la playa",
-    description: "Camastros y sombrillas disponibles",
-  },
-]
-
 export function AdCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovering, setIsHovering] = useState(false)
