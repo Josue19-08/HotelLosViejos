@@ -16,7 +16,7 @@ import { ComoLlegarEditor } from "@/components/admin/page-editor/page-templates/
 import { HomePreview } from "@/components/admin/page-editor/page-previews/home-preview";
 import { SobreNosotrosPreview } from "@/components/admin/page-editor/page-previews/sobre-nosotros-preview";
 import { FacilidadesPreview } from "@/components/admin/page-editor/page-previews/facilidades-preview";
-import { ComoLlegarPreview } from "@/components/admin/page-editor/page-previews/como-llegar/como-llegar-preview";
+import { ComoLlegarPreview } from "@/components/admin/page-editor/page-previews/como-llegar-preview";
 
 import { useAdminPaginas } from "@/hooks/use-admin-paginas";
 
