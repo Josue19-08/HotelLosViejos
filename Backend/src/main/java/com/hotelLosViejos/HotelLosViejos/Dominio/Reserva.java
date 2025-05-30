@@ -23,11 +23,11 @@ public class Reserva {
 
     private LocalDateTime fechaSalida;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "habitacion_id")
     private Habitacion habitacion;
 }

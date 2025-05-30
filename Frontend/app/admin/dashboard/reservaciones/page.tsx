@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarCheck, Eye, Trash2, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarCheck, Eye, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { AdminFooter } from "@/components/admin/admin-footer";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
@@ -10,9 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ReservationDetailModal } from "@/components/admin/reservaciones/reservation-detail-modal";
-import { DeleteConfirmationModal } from "@/components/admin/reservaciones/delete-confirmation-modal";
-import { EditReservationModal } from "@/components/admin/reservaciones/edit-reservation-modal";
 import { useAdminReservaciones } from "@/hooks/use-admin-reservaciones";
+import { formatearFecha } from "@/lib/utils";
 
 export default function ListadoReservacionesPage() {
   const {
@@ -25,18 +24,12 @@ export default function ListadoReservacionesPage() {
     startIndex,
     paginatedReservations,
     handleViewReservation,
-    handleDeleteClick,
-    handleEditReservation,
-    handleSaveEdit,
-    handleDeleteRoom,
-    handlePrintRoom,
     showDetailModal,
-    showEditModal,
-    showDeleteModal,
+    setShowDetailModal,
     selectedReservation,
-    confirmDelete,
   } = useAdminReservaciones();
 
+  
   return (
     <div className="min-h-screen flex flex-col relative">
       <div className="border-b bg-white">
@@ -61,7 +54,7 @@ export default function ListadoReservacionesPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Buscar por ID, nombre o email..."
+                    placeholder="Buscar por nombre o email..."
                     className="pl-10"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -74,13 +67,10 @@ export default function ListadoReservacionesPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-[100px]">Fecha</TableHead>
                         <TableHead>ID Reserva</TableHead>
                         <TableHead>Nombre</TableHead>
                         <TableHead>Apellidos</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Tarjeta</TableHead>
-                        <TableHead>Transacción</TableHead>
+                        <TableHead>Correo</TableHead>
                         <TableHead>Fecha Llegada</TableHead>
                         <TableHead>Fecha Salida</TableHead>
                         <TableHead>Habitación</TableHead>
@@ -91,26 +81,23 @@ export default function ListadoReservacionesPage() {
                       {paginatedReservations.length > 0 ? (
                         paginatedReservations.map((reserva) => (
                           <TableRow key={reserva.id}>
-                            <TableCell>{reserva.fecha}</TableCell>
                             <TableCell>{reserva.id}</TableCell>
-                            <TableCell>{reserva.nombre}</TableCell>
-                            <TableCell>{reserva.apellidos}</TableCell>
-                            <TableCell>{reserva.email}</TableCell>
-                            <TableCell>{reserva.tarjeta}</TableCell>
-                            <TableCell>{reserva.transaccion}</TableCell>
-                            <TableCell>{reserva.fechaLlegada}</TableCell>
-                            <TableCell>{reserva.fechaSalida}</TableCell>
+                            <TableCell>{reserva.cliente.nombre}</TableCell>
+                            <TableCell>{reserva.cliente.apellidos}</TableCell>
+                            <TableCell>{reserva.cliente.correo}</TableCell>
+                            <TableCell>{formatearFecha(reserva.fechaLlegada)}</TableCell>
+                            <TableCell>{formatearFecha(reserva.fechaSalida)}</TableCell>
                             <TableCell>
                               <span
                                 className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  reserva.tipo === "Standard"
+                                  reserva.habitacion.tipo === "JUNIOR"
                                     ? "bg-blue-100 text-blue-800"
-                                    : reserva.tipo === "Suite"
+                                    : reserva.habitacion.tipo === "ESTANDAR"
                                     ? "bg-purple-100 text-purple-800"
                                     : "bg-green-100 text-green-800"
                                 }`}
                               >
-                                {reserva.tipo}
+                                {reserva.habitacion.tipo}
                               </span>
                             </TableCell>
                             <TableCell className="text-right">
@@ -122,14 +109,6 @@ export default function ListadoReservacionesPage() {
                                   className="h-8 w-8 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                                 >
                                   <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleDeleteClick(reserva.id)}
-                                  className="h-8 w-8 text-red-600 hover:text-red-800 hover:bg-red-50"
-                                >
-                                  <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
                             </TableCell>
@@ -187,23 +166,10 @@ export default function ListadoReservacionesPage() {
         <ReservationDetailModal
           reservation={selectedReservation}
           onClose={() => setShowDetailModal(false)}
-          onEdit={handleEditReservation}
-          onDelete={handleDeleteRoom}
-          onPrint={handlePrintRoom}
         />
       )}
 
-      {showEditModal && selectedReservation && (
-        <EditReservationModal
-          reservation={selectedReservation}
-          onSave={handleSaveEdit}
-          onCancel={() => setShowEditModal(false)}
-        />
-      )}
 
-      {showDeleteModal && (
-        <DeleteConfirmationModal onConfirm={confirmDelete} onCancel={() => setShowDeleteModal(false)} />
-      )}
     </div>
   );
 }
