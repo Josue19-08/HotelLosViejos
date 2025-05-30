@@ -20,3 +20,18 @@ export async function registrarReservaCompleta(payload: ReservaPayload) {
 
   return await response.json()
 }
+
+export async function obtenerReservasData() {
+  const response = await fetch(`${API_URL}/reserva`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+
+  if (!response.ok) {
+    throw new Error("Error al obtener las reservas")
+  }
+
+  return await response.json()
+}

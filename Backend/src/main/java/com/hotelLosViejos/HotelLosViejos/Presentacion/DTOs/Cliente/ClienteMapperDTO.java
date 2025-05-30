@@ -28,4 +28,8 @@ public class ClienteMapperDTO {
     public static List<ClienteLecturaDTO> convertirClientesAClientesLecturaDTO(List<Cliente> clientes) {
         return clientes.stream().map(ClienteLecturaDTO::new).collect(Collectors.toList());
     }
+
+    public static ClienteLecturaDTO convertirClienteAClienteLecturaDTO(Cliente cliente){
+        return new ClienteLecturaDTO(cliente);
+    }
 }
