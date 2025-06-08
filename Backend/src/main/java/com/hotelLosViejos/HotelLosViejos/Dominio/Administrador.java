@@ -1,5 +1,6 @@
 package com.hotelLosViejos.HotelLosViejos.Dominio;
 
+import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Administrador.CredencialesAdministradorDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,4 +24,8 @@ public class Administrador {
     private String contrasenia;
 
 
+    public Administrador(CredencialesAdministradorDTO credencialesAdministradorDTO) {
+        this.correo = credencialesAdministradorDTO.correo();
+        this.contrasenia = credencialesAdministradorDTO.contrasenia();
+    }
 }

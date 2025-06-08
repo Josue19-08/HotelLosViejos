@@ -37,4 +37,5 @@ export async function getReservaById(id: number): Promise<ReservaLectura> {
   console.log("📥 ReservaData → JSON recibido:", json)
 
   return json
+
 }

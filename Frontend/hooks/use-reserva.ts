@@ -1,6 +1,6 @@
 import { registrarReservaCompleta } from "@/lib/ReservaData"
 import { ReservaPayload } from "@/types/Reserva"
-
+import { obtenerReservasData } from "@/lib/ReservaData"
 export const useReserva = () => {
   const crearReserva = async (
     nombre: string,
@@ -24,5 +24,12 @@ export const useReserva = () => {
     return await registrarReservaCompleta(payload)
   }
 
-  return { crearReserva }
+  async function obtenerReservas() {
+   
+    return await obtenerReservasData();
+
+  }
+
+
+  return { crearReserva, obtenerReservas }
 }

@@ -33,4 +33,8 @@ public class HabitacionMapperDTO {
                 .map(HabitacionLecturaDTO::new)
                 .collect(Collectors.toList());
     }
+
+    public static HabitacionLecturaDTO convertirHabitacionAHabitacionLecturaDTO(Habitacion habitacion){
+        return new HabitacionLecturaDTO(habitacion);
+    }
 }
