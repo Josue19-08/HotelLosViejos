@@ -13,11 +13,10 @@ public record ReservaLecturaDTO(
         String numeroReserva,
         LocalDateTime fechaLlegada,
         LocalDateTime fechaSalida,
-        ClienteLecturaDTO cliente,
-        HabitacionLecturaDTO habitacion
+        String clienteNombre,
+        int habitacionId
 ) {
     public ReservaLecturaDTO(Reserva r) {
-
         this(
                 r.getId(),
                 r.getNumeroReserva(),
@@ -26,6 +25,5 @@ public record ReservaLecturaDTO(
                 r.getCliente().getNombre() + " " + r.getCliente().getApellidos(),
                 r.getHabitacion().getId()
         );
-
     }
 }
