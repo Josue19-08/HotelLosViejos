@@ -13,6 +13,13 @@ public record ReservaLecturaDTO(
         int habitacionId
 ) {
     public ReservaLecturaDTO(Reserva r) {
-        this(r.getId(), r.getNumeroReserva(), r.getFechaLlegada(), r.getFechaSalida(), r.getCliente().getNombre(), r.getHabitacion().getId());
+        this(
+                r.getId(),
+                r.getNumeroReserva(),
+                r.getFechaLlegada(),
+                r.getFechaSalida(),
+                r.getCliente().getNombre() + " " + r.getCliente().getApellidos(),
+                r.getHabitacion().getId()
+        );
     }
 }
