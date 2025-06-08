@@ -18,10 +18,7 @@ export default function ReservarPage() {
                 Reservar en Línea
               </h1>
 
-              <div
-                className="bg-white/80 backdrop-blur-sm rounded-lg shadow-md p-6 animate-fade-in-up"
-                style={{ animationDelay: "0.2s" }}
-              >
+              <div className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
                 <ReservationForm />
               </div>
             </div>
@@ -33,4 +30,3 @@ export default function ReservarPage() {
     </div>
   )
 }
-

@@ -1,4 +1,5 @@
-// /src/hooks/use-reservation.ts
+"use client"
+
 import { useState, useEffect } from "react"
 import { differenceInDays } from "date-fns"
 import { useHabitacion } from "@/hooks/use-habitacion"
@@ -23,7 +24,7 @@ export function useReservation() {
   const [alert, setAlert] = useState<{ type: string; title: string; message: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(false)
-  const [reservationNumber, setReservationNumber] = useState("")
+  const [reservationId, setReservationId] = useState<number | null>(null)
   const [appliedOffer, setAppliedOffer] = useState<{ title: string; percentage: number } | null>(null)
 
   const [firstName, setFirstName] = useState("")
@@ -51,7 +52,9 @@ export function useReservation() {
           const month = new Date(checkInDate).getMonth() + 1
           const isAlta = [4, 7, 8, 12].includes(month)
           const seasonPercent = isAlta ? altaPercentage : bajaPercentage
-          const baseNumber = typeof room.tarifaDiariaBase === "number" ? room.tarifaDiariaBase : parseFloat(room.tarifaDiariaBase as unknown as string)
+          const baseNumber = typeof room.tarifaDiariaBase === "number"
+            ? room.tarifaDiariaBase
+            : parseFloat(room.tarifaDiariaBase as unknown as string)
           const base = baseNumber * (1 + Number(seasonPercent) / 100)
 
           const applicableOffer = offers.find((offer) => {
@@ -98,43 +101,44 @@ export function useReservation() {
   }
 
   const handleSecondStep = async (data: {
-  firstName: string
-  lastName: string
-  email: string
-  creditCard: string
-}) => {
-  const { firstName, lastName, email, creditCard } = data
+    firstName: string
+    lastName: string
+    email: string
+    creditCard: string
+  }) => {
+    const { firstName, lastName, email, creditCard } = data
 
-  if (!firstName || !lastName || !email || creditCard.length < 13) {
-    setAlert({
-      type: "error",
-      title: "Error",
-      message: "Complete todos los campos correctamente.",
-    })
-    return
-  }
-
-  setIsSubmitting(true)
-  try {
-    if (selectedRoom && checkInDate && checkOutDate) {
-      await crearReserva(firstName, lastName, email, creditCard, selectedRoom.id, checkInDate, checkOutDate)
-      setAlert(null)
-      setReservationNumber(
-        Math.random().toString(36).substring(2, 10).toUpperCase() +
-        Math.floor(Math.random() * 1000000).toString().padStart(6, "0")
-      )
-      setFormSubmitted(true)
+    if (!firstName || !lastName || !email || creditCard.length < 13) {
+      setAlert({
+        type: "error",
+        title: "Error",
+        message: "Complete todos los campos correctamente.",
+      })
+      return
     }
-  } catch (err: any) {
-    const msg = err.message.includes("Habitacion no disponible")
-      ? "Ya existe una reserva con esos datos. Seleccione otras fechas."
-      : "Ocurrió un error al procesar la reserva."
-    setAlert({ type: "error", title: "Error", message: msg })
-  } finally {
-    setIsSubmitting(false)
-  }
-}
 
+    setIsSubmitting(true)
+    try {
+      if (selectedRoom && checkInDate && checkOutDate) {
+        const reserva = await crearReserva(firstName, lastName, email, creditCard, selectedRoom.id, checkInDate, checkOutDate)
+        console.log("📦 Reserva creada →", reserva)
+        if (!reserva?.id) {
+          throw new Error("Reserva inválida: no tiene ID.")
+        }
+        setReservationId(reserva.id)
+        setFormSubmitted(true)
+        setAlert(null)
+      }
+    } catch (err: any) {
+      const msg = err.message.includes("Habitacion no disponible")
+        ? "Ya existe una reserva con esos datos. Seleccione otras fechas."
+        : "Ocurrió un error al procesar la reserva."
+      console.error("❌ Error al crear reserva:", err)
+      setAlert({ type: "error", title: "Error", message: msg })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return {
     checkInDate, setCheckInDate,
@@ -157,6 +161,6 @@ export function useReservation() {
     handleSecondStep,
     isSubmitting,
     formSubmitted,
-    reservationNumber
+    reservationId
   }
 }

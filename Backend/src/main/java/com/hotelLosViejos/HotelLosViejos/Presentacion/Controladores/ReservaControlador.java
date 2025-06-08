@@ -8,6 +8,7 @@ import com.hotelLosViejos.HotelLosViejos.Dominio.Cliente;
 import com.hotelLosViejos.HotelLosViejos.Dominio.DatoPago;
 import com.hotelLosViejos.HotelLosViejos.Dominio.Habitacion;
 import com.hotelLosViejos.HotelLosViejos.Dominio.Reserva;
+import com.hotelLosViejos.HotelLosViejos.Infraestructura.Servicios.CorreoService;
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Cliente.ClienteMapperDTO;
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.DatoPago.DatoPagoMapperDTO;
 import com.hotelLosViejos.HotelLosViejos.Presentacion.DTOs.Reserva.*;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 
 @RestController
@@ -25,16 +27,20 @@ import java.util.List;
 public class ReservaControlador {
 
     @Autowired
-    private final IReserva iReserva;
+    private IReserva iReserva;
 
     @Autowired
-    private final ICliente iCliente;
+    private ICliente iCliente;
 
     @Autowired
-    private final IHabitacion iHabitacion;
+    private IHabitacion iHabitacion;
 
     @Autowired
-    private final IDatoPago iDatoPago;
+    private IDatoPago iDatoPago;
+
+    @Autowired
+    private CorreoService correoService;
+
 
     public ReservaControlador(IReserva iReserva, ICliente iCliente, IHabitacion iHabitacion, IDatoPago iDatoPago) {
         this.iReserva = iReserva;
@@ -56,28 +62,21 @@ public class ReservaControlador {
 
     @PostMapping("/completa")
     public ResponseEntity<ReservaLecturaDTO> registrarReservaCompleta(@RequestBody @Valid ReservaFullDTO dto) {
-        // Crear cliente
         Cliente cliente = new Cliente();
         cliente.setNombre(dto.nombre());
         cliente.setApellidos(dto.apellidos());
         cliente.setCorreo(dto.correo());
 
-        boolean clienteCreado = iCliente.registrarCliente(cliente);
-        if (!clienteCreado) return ResponseEntity.badRequest().build();
+        if (!iCliente.registrarCliente(cliente)) return ResponseEntity.badRequest().build();
 
-        // Crear dato de pago
         DatoPago pago = new DatoPago();
         pago.setNumeroTarjeta(dto.numeroTarjeta());
         pago.setCliente(cliente);
+        if (!iDatoPago.registrar(pago)) return ResponseEntity.badRequest().build();
 
-        boolean pagoCreado = iDatoPago.registrar(pago);
-        if (!pagoCreado) return ResponseEntity.badRequest().build();
-
-        // Obtener habitación
         Habitacion habitacion = iHabitacion.obtenerHabitacionPorId(dto.habitacionId());
         if (habitacion == null) return ResponseEntity.badRequest().build();
 
-        // Crear reserva
         Reserva reserva = ReservaMapperDTO.convertirRegistroDTOAReserva(
                 new ReservaRegistroDTO(dto.fechaLlegada(), dto.fechaSalida(), cliente.getId(), dto.habitacionId()),
                 cliente,
@@ -86,6 +85,8 @@ public class ReservaControlador {
 
         boolean creada = iReserva.registrarReserva(reserva);
         if (!creada) return ResponseEntity.badRequest().build();
+
+        correoService.enviarCorreoReserva(reserva);
 
         return ResponseEntity.ok(new ReservaLecturaDTO(reserva));
     }
@@ -114,4 +115,13 @@ public class ReservaControlador {
                                                            @PathVariable int idReserva){
         return ResponseEntity.ok(this.iReserva.obtenerPDFReserva(idReserva));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservaLecturaDTO> obtenerReservaPorId(@PathVariable int id) {
+        Reserva reserva = iReserva.obtenerReservaPorId(id);
+        if (reserva == null) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(new ReservaLecturaDTO(reserva));
+    }
+
 }

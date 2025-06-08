@@ -28,19 +28,18 @@ export function ReservationForm() {
     handleSecondStep,
     isSubmitting,
     formSubmitted,
-    reservationNumber
+    reservationId,
   } = useReservation()
 
   const { habitaciones } = useHabitacion()
 
-  if (formSubmitted) {
+  if (formSubmitted && reservationId) {
     return (
-      <ConfirmationMessage
-        firstName={firstName}
-        reservationNumber={reservationNumber}
-        email={email}
-      />
+      <div className="w-full flex justify-center px-4 overflow-visible">
+        <ConfirmationMessage idReserva={reservationId} />
+      </div>
     )
+
   }
 
   return (
@@ -82,8 +81,8 @@ export function ReservationForm() {
           isSubmitting={isSubmitting}
           onBack={() => setStep(1)}
           onSubmit={handleSecondStep}
-          alert={alert} // 👈 agregado
-          setAlert={setAlert} // 👈 agregado
+          alert={alert}
+          setAlert={setAlert}
         />
       )}
     </>
