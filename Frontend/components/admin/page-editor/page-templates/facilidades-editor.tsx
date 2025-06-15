@@ -10,17 +10,37 @@ import { useFacilidadesEditor } from "@/hooks/use-facilidades-editor"
 
 export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void }) {
   const {
-    facilidades,
-    isSaving,
-    handleChange,
-    handleAdd,
-    handleRemove,
-    handleReorder,
-    handleSave,
-  } = useFacilidadesEditor(onChange)
+      facilidades,
+      isSaving,
+      handleChange,
+      handleAdd,
+      handleRemove,
+      handleReorder,
+      handleSave,
+      showConfirmDelete,
+      setShowConfirmDelete,
+      confirmDelete,
+      validationError,
+      setValidationError,
+      message,
+      messageType,
+    } = useFacilidadesEditor(onChange)
 
   return (
     <div className="space-y-6">
+
+    {/* Mensaje de feedback */}
+    {message && (
+       <div
+          className={`p-4 rounded-md text-sm ${
+          messageType === "success"
+          ? "bg-green-100 text-green-800"
+           : "bg-red-100 text-red-800"
+           }`}
+            >
+            {message}
+       </div>
+    )}
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium text-gray-800">Facilidades del hotel</h2>
@@ -30,11 +50,16 @@ export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void
         </Button>
       </div>
 
-      {/* Si está vacío */}
+      {/* Facilidades vacías */}
       {facilidades.length === 0 ? (
         <div className="text-center py-8 border rounded-md bg-gray-50">
           <p className="text-gray-500">No hay facilidades agregadas</p>
-          <Button onClick={handleAdd} variant="outline" size="sm" className="mt-2 flex items-center gap-1 mx-auto">
+          <Button
+            onClick={handleAdd}
+            variant="outline"
+            size="sm"
+            className="mt-2 flex items-center gap-1 mx-auto"
+          >
             <Plus size={16} />
             Agregar facilidad
           </Button>
@@ -45,7 +70,12 @@ export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void
             <div key={facilidad.id || facilidad._uuid} className="border rounded-md p-4 relative">
               {/* Acciones arriba */}
               <div className="absolute top-2 right-2 flex space-x-1">
-                <Button onClick={() => handleReorder(i, "up")} disabled={i === 0} variant="ghost" size="icon">
+                <Button
+                  onClick={() => handleReorder(i, "up")}
+                  disabled={i === 0}
+                  variant="ghost"
+                  size="icon"
+                >
                   <MoveUp size={16} />
                 </Button>
                 <Button
@@ -114,7 +144,14 @@ export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void
                             fill="none"
                             viewBox="0 0 24 24"
                           >
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                              className="opacity-25"
+                            />
                             <path
                               fill="currentColor"
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291..."
@@ -135,6 +172,41 @@ export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Confirmación de eliminación */}
+      {showConfirmDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded p-6 shadow-md text-center max-w-sm mx-auto">
+            <h2 className="text-lg font-semibold mb-4">
+              ¿Estás segura que deseas eliminar esta facilidad?
+            </h2>
+            <div className="flex justify-center gap-4">
+              <Button
+                onClick={() => setShowConfirmDelete(false)}
+                variant="outline"
+              >
+                Cancelar
+              </Button>
+              <Button onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
+                Eliminar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error de validación */}
+      {validationError && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded p-6 shadow-md max-w-sm mx-auto text-center">
+            <h3 className="text-lg font-semibold mb-4">Error de validación</h3>
+            <p className="mb-6">{validationError}</p>
+            <Button onClick={() => setValidationError(null)} variant="outline">
+              Cerrar
+            </Button>
+          </div>
         </div>
       )}
     </div>
