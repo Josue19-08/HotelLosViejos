@@ -4,7 +4,6 @@ import { Save, Plus, Trash2, MoveUp, MoveDown } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ImageEditor } from "../image-editor"
 import { useSobreNosotrosEditor } from "@/hooks/use-sobre-nosotros-editor"
 
 export function SobreNosotrosEditor() {
@@ -40,49 +39,15 @@ export function SobreNosotrosEditor() {
         />
       </section>
 
-      {/* Botón de guardar */}
-      <Button
-        onClick={handleSave}
-        className="bg-teal-600 hover:bg-teal-700 flex items-center gap-2"
-        disabled={isSaving}
-      >
-        {isSaving ? (
-          <>
-            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              />
-            </svg>
-            Guardando...
-          </>
-        ) : (
-          <>
-            <Save size={16} />
-            Guardar cambios
-          </>
-        )}
-      </Button>
 
       {/* Galería principal */}
       <section className="border-t pt-6">
         <h2 className="text-xl font-medium text-gray-800 mb-4">Nuestra Galería</h2>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Imagen principal</label>
-          <ImageEditor
-            label="Imagen de portada de la galería"
-            currentImageUrl={data.nombreImagenBienvenida || ""}
-            onImageChange={(url) => handleImageChange("nombreImagenBienvenida", url)}
-          />
-        </div>
-
         {/* Lista de imágenes */}
         <div className="border-t pt-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-md font-medium text-gray-700">Imágenes adicionales</h3>
+            <h3 className="text-md font-medium text-gray-700">Imágenes</h3>
             <Button onClick={handleAddImage} variant="outline" size="sm" className="flex items-center gap-1">
               <Plus size={16} />
               Agregar imagen
@@ -169,6 +134,31 @@ export function SobreNosotrosEditor() {
           )}
         </div>
       </section>
+      {/* Botón de guardar */}
+      <Button
+        onClick={handleSave}
+        className="bg-teal-600 hover:bg-teal-700 flex items-center gap-2"
+        disabled={isSaving}
+      >
+        {isSaving ? (
+          <>
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
+            Guardando...
+          </>
+        ) : (
+          <>
+            <Save size={16} />
+            Guardar cambios
+          </>
+        )}
+      </Button>
     </div>
   )
 }

@@ -17,8 +17,10 @@ public class GaleriaMapperDTO {
                 .collect(Collectors.toList());
     }
 
-    public static Galeria convertirGaleriaActualizacionDTOAGaleria(GaleriaActualizacionDTO galeriaActualizacionDTO){
-        return new Galeria(galeriaActualizacionDTO);
+    public static List<Galeria> convertirGaleriasActualizacionDTOAGalerias(List<GaleriaActualizacionDTO> galeriasActualizacionDTO){
+        return galeriasActualizacionDTO.stream()
+                .map(Galeria::new)
+                .collect(Collectors.toList());
     }
 
 }

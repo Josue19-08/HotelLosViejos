@@ -29,7 +29,7 @@ public class Galeria {
     }
 
     public Galeria(GaleriaActualizacionDTO galeriaActualizacionDTO) {
-        this.id = galeriaActualizacionDTO.id();
+        if (galeriaActualizacionDTO.id() != null) this.id = galeriaActualizacionDTO.id();
         this.descripcion = galeriaActualizacionDTO.descripcion();
         this.nombreImagen = galeriaActualizacionDTO.nombreImagen();
     }

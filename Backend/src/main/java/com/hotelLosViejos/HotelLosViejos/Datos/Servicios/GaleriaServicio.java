@@ -40,21 +40,31 @@ public class GaleriaServicio implements IGaleria {
     @Modifying
     @Transactional
     @Override
-    public boolean actualizarGaleria(Galeria galeriaNueva) {
+    public boolean actualizarGalerias(List<Galeria> nuevasGalerias) {
         try {
+            List<Integer> nuevosIds = nuevasGalerias.stream()
+                    .map(Galeria::getId)
+                    .filter(id -> id != null) // evitar nulls
+                    .toList();
 
-            Galeria galeriaEncontrada = this.galeriaRepositorio.findById(galeriaNueva.getId())
-                    .orElseThrow( () -> new Exception("Informacion no encontrada") );
+            List<Galeria> existentes = galeriaRepositorio.findAll();
 
-            galeriaEncontrada = galeriaNueva;
+            List<Galeria> paraEliminar = existentes.stream()
+                    .filter(img -> !nuevosIds.contains(img.getId()))
+                    .toList();
 
-            this.galeriaRepositorio.save(galeriaEncontrada);
+            galeriaRepositorio.deleteAll(paraEliminar);
+
+            galeriaRepositorio.saveAll(nuevasGalerias);
+
             return true;
 
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
+
 
     @Override
     public boolean eliminarGaleria(int idGaleria) {
