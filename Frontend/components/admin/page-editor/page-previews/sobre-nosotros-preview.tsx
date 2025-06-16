@@ -1,4 +1,5 @@
 import { useGaleria } from "@/hooks/use-galeria";
+import { useInformacion } from "@/hooks/use-informacion";
 
 interface ImagenGaleria {
   id: string;
@@ -6,22 +7,10 @@ interface ImagenGaleria {
   titulo?: string;
 }
 
-// Modificar la interfaz para quitar el título como campo editable
-interface SobreNosotrosData {
-  historia: string;
-  imagenPrincipal: string;
-  imagenesGaleria: ImagenGaleria[];
-}
-
-interface SobreNosotrosPreviewProps {
-  data: SobreNosotrosData;
-}
-
-// Modificar la función de previsualización para usar un título fijo
-export function SobreNosotrosPreview({ data }: SobreNosotrosPreviewProps) {
-
+export function SobreNosotrosPreview() {
   const { galerias } = useGaleria();
-
+  const { textoSobreNosotros } = useInformacion();
+  console.log(galerias);
   return (
     <div className="bg-white border rounded-md overflow-hidden">
       <div className="p-6">
@@ -31,7 +20,7 @@ export function SobreNosotrosPreview({ data }: SobreNosotrosPreviewProps) {
 
         <div className="bg-gray-50 rounded-lg p-6 mb-8">
           <p className="text-gray-700 whitespace-pre-line">
-            {data.historia || "Historia del hotel..."}
+            {textoSobreNosotros || "Texto sobre nosotros..."}
           </p>
         </div>
 
@@ -43,7 +32,8 @@ export function SobreNosotrosPreview({ data }: SobreNosotrosPreviewProps) {
           <div className="rounded-md overflow-hidden">
             <img
               src={
-                data.imagenPrincipal || "/placeholder.svg?height=400&width=600"
+                galerias[0]?.nombreImagen ||
+                "/placeholder.svg?height=400&width=600"
               }
               alt="Imagen principal"
               className="w-full h-auto object-cover"
@@ -57,7 +47,7 @@ export function SobreNosotrosPreview({ data }: SobreNosotrosPreviewProps) {
 
             <div className="space-y-2 max-h-80 overflow-y-auto pr-2">
               {galerias.length > 0 ? (
-                galerias.map((imagen) => (
+                galerias.slice(1).map((imagen) => (
                   <div key={imagen.id} className="mb-2">
                     <img
                       src={imagen.nombreImagen || "/placeholder.svg"}

@@ -2,15 +2,16 @@ import { useState, useEffect } from "react"
 import { useInformacion } from "@/hooks/use-informacion"
 import { useGaleria } from "@/hooks/use-galeria"
 import { updateInformation } from "@/lib/Informacion"
+import { updateGaleries } from "@/lib/GaleriaData"
 import type { InformacionBase } from "@/types/Informacion"
 
+// ✅ ID ahora puede ser null o no estar definido
 export interface ImagenGaleria {
-  id: string
-  nombreImagen: string
+  id?: number | null
   descripcion?: string
+  nombreImagen: string
 }
 
-// 🔧 Tipo extendido para incluir imágenes de galería
 interface InformacionConGaleria extends InformacionBase {
   imagenesGaleria: ImagenGaleria[]
 }
@@ -27,7 +28,7 @@ export function useSobreNosotrosEditor() {
     nombreImagenBienvenida: info.nombreImagenBienvenida,
     imagenesGaleria: galerias
       ? galerias.map(g => ({
-          id: g.id !== undefined ? String(g.id) : Date.now().toString(),
+          id: g.id ?? null, // ✅ id null si no viene
           nombreImagen: g.nombreImagen ?? "",
           descripcion: g.descripcion ?? "",
         }))
@@ -42,7 +43,7 @@ export function useSobreNosotrosEditor() {
         ...info,
         imagenesGaleria: galerias
           ? galerias.map(g => ({
-              id: g.id !== undefined ? String(g.id) : Date.now().toString(),
+              id: g.id ?? null, // ✅ aseguramos que si no hay id, quede en null
               nombreImagen: g.nombreImagen ?? "",
               descripcion: g.descripcion ?? "",
             }))
@@ -65,6 +66,9 @@ export function useSobreNosotrosEditor() {
   const handleSave = async () => {
     setIsSaving(true)
     await updateInformation(data)
+    const { imagenesGaleria } = data
+    console.log(imagenesGaleria)
+    await updateGaleries(imagenesGaleria)
     await new Promise(resolve => setTimeout(resolve, 1500))
     setIsSaving(false)
     alert("Cambios guardados con éxito")
@@ -73,7 +77,7 @@ export function useSobreNosotrosEditor() {
 
   const handleAddImage = () => {
     const nueva: ImagenGaleria = {
-      id: Date.now().toString(),
+      id: null, // ✅ dejamos el id en null para que Spring lo genere
       nombreImagen: "/placeholder.svg?height=200&width=300",
       descripcion: "",
     }
@@ -83,14 +87,14 @@ export function useSobreNosotrosEditor() {
     }))
   }
 
-  const handleRemoveImage = (id: string) => {
+  const handleRemoveImage = (id: number | null | undefined) => {
     setData(prev => ({
       ...prev,
       imagenesGaleria: prev.imagenesGaleria.filter(img => img.id !== id),
     }))
   }
 
-  const handleImageTitleChange = (id: string, titulo: string) => {
+  const handleImageTitleChange = (id: number | null | undefined, titulo: string) => {
     setData(prev => ({
       ...prev,
       imagenesGaleria: prev.imagenesGaleria.map(img =>
@@ -99,7 +103,7 @@ export function useSobreNosotrosEditor() {
     }))
   }
 
-  const handleImageUrlChange = (id: string, url: string) => {
+  const handleImageUrlChange = (id: number | null | undefined, url: string) => {
     setData(prev => ({
       ...prev,
       imagenesGaleria: prev.imagenesGaleria.map(img =>
@@ -108,7 +112,7 @@ export function useSobreNosotrosEditor() {
     }))
   }
 
-  const moveImage = (id: string, direction: "up" | "down") => {
+  const moveImage = (id: number | null | undefined, direction: "up" | "down") => {
     const index = data.imagenesGaleria.findIndex(img => img.id === id)
     if (
       index === -1 ||

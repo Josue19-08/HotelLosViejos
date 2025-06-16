@@ -2,7 +2,6 @@ import type { GaleriaBase } from "@/types/Galeria";
 import { getAllGaleries } from "@/lib/GaleriaData";
 import { useEffect, useState } from "react";
 
-
 export const useGaleria = () => {
 
     const [galerias, setGalerias] = useState<GaleriaBase[]>([]);

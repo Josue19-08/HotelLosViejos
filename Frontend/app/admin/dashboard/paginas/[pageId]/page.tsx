@@ -83,7 +83,7 @@ export default function EditarPaginaPage() {
       case "home":
         return <HomePreview data={formData} />;
       case "sobre-nosotros":
-        return <SobreNosotrosPreview data={formData} />;
+        return <SobreNosotrosPreview />;
       case "facilidades":
         return <FacilidadesPreview data={formData} />;
       case "como-llegar":
