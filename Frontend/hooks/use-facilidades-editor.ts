@@ -11,7 +11,10 @@ interface FacilidadesData {
 export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void) {
   const { facilidades } = useFacilidad()
   const [data, setData] = useState<FacilidadesData>({ facilidades: [] })
+
+  // Estado para saber si se está guardando y qué índice
   const [isSaving, setIsSaving] = useState(false)
+  const [savingIndex, setSavingIndex] = useState<number | null>(null)
 
   useEffect(() => {
     if (facilidades?.length > 0 && data.facilidades.length === 0) {
@@ -56,6 +59,7 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
 
   const handleSave = async (index: number) => {
     setIsSaving(true)
+    setSavingIndex(index)
     const facilidad = data.facilidades[index]
 
     try {
@@ -74,12 +78,15 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
     }
 
     setIsSaving(false)
-    window.location.reload()
+    setSavingIndex(null)
+    // No recomiendo recargar la página, mejor actualizar localmente
+    // window.location.reload()
   }
 
   return {
     facilidades: data.facilidades,
     isSaving,
+    savingIndex,
     handleChange,
     handleAdd,
     handleRemove,

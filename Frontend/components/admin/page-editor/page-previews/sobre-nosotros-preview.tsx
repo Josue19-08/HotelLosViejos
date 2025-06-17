@@ -10,7 +10,6 @@ interface ImagenGaleria {
 export function SobreNosotrosPreview() {
   const { galerias } = useGaleria();
   const { textoSobreNosotros } = useInformacion();
-  console.log(galerias);
   return (
     <div className="bg-white border rounded-md overflow-hidden">
       <div className="p-6">

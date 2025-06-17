@@ -29,22 +29,21 @@ export function HomePreview() {
       <div
         className="relative h-80 bg-cover bg-center flex items-center"
         style={{
-          backgroundImage: `url(${data.imagenHero || "/placeholder.svg?height=400&width=800"})`,
+          backgroundImage: `url("/images/portada.png")`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         <div className="relative z-10 text-white p-8 max-w-xl">
-          <h1 className="text-4xl font-playfair font-bold mb-3">{data.titulo || "Bienvenidos al Hotel Los Viejos"}</h1>
+          <h1 className="text-4xl font-playfair font-bold mb-3">Bienvenidos al Hotel Los Viejos</h1>
           <p className="text-lg">
-            {data.subtitulo ||
-              "Su paraíso en la playa le espera. Disfrute de nuestras instalaciones de lujo y la mejor vista al mar."}
+            Su paraíso en la playa le espera. Disfrute de nuestras instalaciones de lujo y la mejor vista al mar.
           </p>
         </div>
       </div>
 
-      {/* Welcome Section */}
+
       <div className="p-6 bg-gray-50">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">

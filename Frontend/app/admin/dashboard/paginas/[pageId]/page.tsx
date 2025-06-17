@@ -70,7 +70,7 @@ export default function EditarPaginaPage() {
       case "sobre-nosotros":
         return <SobreNosotrosEditor />;
       case "facilidades":
-        return <FacilidadesEditor initialData={formData} onChange={handleFormChange} />;
+        return <FacilidadesEditor  onChange={handleFormChange} />;
       case "como-llegar":
         return <ComoLlegarEditor />;
       default:
@@ -81,7 +81,7 @@ export default function EditarPaginaPage() {
   const renderPreview = () => {
     switch (pageId) {
       case "home":
-        return <HomePreview data={formData} />;
+        return <HomePreview/>;
       case "sobre-nosotros":
         return <SobreNosotrosPreview />;
       case "facilidades":
