@@ -4,6 +4,7 @@ import { useGaleria } from "@/hooks/use-galeria"
 import { updateInformation } from "@/lib/Informacion"
 import { updateGaleries } from "@/lib/GaleriaData"
 import type { InformacionBase } from "@/types/Informacion"
+import isEqual from "lodash/isEqual"
 
 // ✅ ID ahora puede ser null o no estar definido
 export interface ImagenGaleria {
@@ -22,13 +23,13 @@ export function useSobreNosotrosEditor() {
 
   const [data, setData] = useState<InformacionConGaleria>({
     id: info.id,
-    textoSobreNosotros: info.textoSobreNosotros,
-    textoBienvenida: info.textoBienvenida,
-    nombre: info.nombre,
-    nombreImagenBienvenida: info.nombreImagenBienvenida,
+    textoSobreNosotros: info.textoSobreNosotros ?? "",
+    textoBienvenida: info.textoBienvenida ?? "",
+    nombre: info.nombre ?? "",
+    nombreImagenBienvenida: info.nombreImagenBienvenida ?? "",
     imagenesGaleria: galerias
       ? galerias.map(g => ({
-          id: g.id ?? null, // ✅ id null si no viene
+          id: g.id ?? null,
           nombreImagen: g.nombreImagen ?? "",
           descripcion: g.descripcion ?? "",
         }))
@@ -38,17 +39,23 @@ export function useSobreNosotrosEditor() {
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
-    if (!data.id && info.id) {
-      setData({
-        ...info,
-        imagenesGaleria: galerias
-          ? galerias.map(g => ({
-              id: g.id ?? null, // ✅ aseguramos que si no hay id, quede en null
-              nombreImagen: g.nombreImagen ?? "",
-              descripcion: g.descripcion ?? "",
-            }))
-          : [],
-      })
+    if (!info.id || !galerias) return
+
+    const nuevaData = {
+      id: info.id,
+      textoSobreNosotros: info.textoSobreNosotros ?? "",
+      textoBienvenida: info.textoBienvenida ?? "",
+      nombre: info.nombre ?? "",
+      nombreImagenBienvenida: info.nombreImagenBienvenida ?? "",
+      imagenesGaleria: galerias.map(g => ({
+        id: g.id ?? null,
+        nombreImagen: g.nombreImagen ?? "",
+        descripcion: g.descripcion ?? "",
+      })),
+    }
+
+    if (!isEqual(data, nuevaData)) {
+      setData(nuevaData)
     }
   }, [info, galerias])
 
@@ -77,7 +84,7 @@ export function useSobreNosotrosEditor() {
 
   const handleAddImage = () => {
     const nueva: ImagenGaleria = {
-      id: null, // ✅ dejamos el id en null para que Spring lo genere
+      id: null,
       nombreImagen: "/placeholder.svg?height=200&width=300",
       descripcion: "",
     }

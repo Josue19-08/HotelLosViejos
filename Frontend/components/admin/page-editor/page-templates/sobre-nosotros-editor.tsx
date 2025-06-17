@@ -20,10 +20,38 @@ export function SobreNosotrosEditor() {
     moveImage,
   } = useSobreNosotrosEditor()
 
+  // Aquí corregimos la condición de carga para que solo muestre spinner si no hay id
+  const isLoading = !data?.id
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+        <svg
+          className="animate-spin h-10 w-10 text-teal-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
+        </svg>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-
-      {/* Texto principal */}
       <section>
         <h2 className="text-xl font-medium text-gray-800 mb-2">Contenido principal</h2>
         <label htmlFor="textoSobreNosotros" className="block text-sm font-medium text-gray-700 mb-1">
@@ -39,12 +67,9 @@ export function SobreNosotrosEditor() {
         />
       </section>
 
-
-      {/* Galería principal */}
       <section className="border-t pt-6">
         <h2 className="text-xl font-medium text-gray-800 mb-4">Nuestra Galería</h2>
 
-        {/* Lista de imágenes */}
         <div className="border-t pt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-md font-medium text-gray-700">Imágenes</h3>
@@ -54,7 +79,7 @@ export function SobreNosotrosEditor() {
             </Button>
           </div>
 
-          {data.imagenesGaleria?.length === 0 ? (
+          {data.imagenesGaleria.length === 0 ? (
             <div className="text-center py-8 border rounded-md bg-gray-50">
               <p className="text-gray-500">No hay imágenes en la galería</p>
               <Button onClick={handleAddImage} variant="outline" size="sm" className="mt-2 flex items-center gap-1 mx-auto">
@@ -65,8 +90,7 @@ export function SobreNosotrosEditor() {
           ) : (
             <div className="space-y-4">
               {data.imagenesGaleria.map((imagen, index) => (
-                <div key={imagen.id} className="border rounded-md p-4 relative">
-                  {/* Acciones de orden y eliminación */}
+                <div key={imagen.id ?? index} className="border rounded-md p-4 relative">
                   <div className="absolute top-2 right-2 flex space-x-1">
                     <Button
                       type="button"
@@ -99,7 +123,6 @@ export function SobreNosotrosEditor() {
                     </Button>
                   </div>
 
-                  {/* Imagen y datos */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                     <img
                       src={imagen.nombreImagen || "/placeholder.svg"}
@@ -108,16 +131,13 @@ export function SobreNosotrosEditor() {
                     />
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Título (opcional)
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Título (opcional)</label>
                         <Input
                           value={imagen.descripcion || ""}
                           onChange={(e) => handleImageTitleChange(imagen.id, e.target.value)}
                           placeholder="Ej: Playa al atardecer"
                         />
                       </div>
-
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">URL de la imagen</label>
                         <Input
@@ -134,7 +154,7 @@ export function SobreNosotrosEditor() {
           )}
         </div>
       </section>
-      {/* Botón de guardar */}
+
       <Button
         onClick={handleSave}
         className="bg-teal-600 hover:bg-teal-700 flex items-center gap-2"
