@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { consultarDisponibilidad } from "@/lib/disponibilidadData";
+import { consultarDisponibilidad } from "@/lib/DisponibilidadData";
 import type { Disponibilidad } from "@/types/Disponibilidad";
 
 export const useDisponibilidad = () => {
