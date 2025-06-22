@@ -11,12 +11,17 @@ interface FacilidadesData {
 export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void) {
   const { facilidades } = useFacilidad()
   const [data, setData] = useState<FacilidadesData>({ facilidades: [] })
+
+  // Estados de guardado
   const [isSaving, setIsSaving] = useState(false)
+  const [savingIndex, setSavingIndex] = useState<number | null>(null)
+
+  // Estados para confirmación de eliminación
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
   const [indexToDelete, setIndexToDelete] = useState<number | null>(null)
-  const [validationError, setValidationError] = useState<string | null>(null)
 
-  // Nuevo estado para mensajes de feedback
+  // Validación y feedback
+  const [validationError, setValidationError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [messageType, setMessageType] = useState<"success" | "error" | null>(null)
 
@@ -32,11 +37,9 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
         setMessage(null)
         setMessageType(null)
       }, 4000)
-
       return () => clearTimeout(timer)
     }
   }, [message])
-
 
   const notifyChange = (newData: FacilidadesData) => {
     setData(newData)
@@ -66,18 +69,20 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
 
   const confirmDelete = async () => {
     if (indexToDelete === null) return
-
     const facilidad = data.facilidades[indexToDelete]
 
     try {
       if (facilidad.id && typeof facilidad.id === "number") {
         await deleteFacility(facilidad.id)
       }
+
       const copy = [...data.facilidades]
       copy.splice(indexToDelete, 1)
       notifyChange({ facilidades: copy })
+
       setShowConfirmDelete(false)
       setIndexToDelete(null)
+
       setMessage("Facilidad eliminada con éxito")
       setMessageType("success")
     } catch (error) {
@@ -97,15 +102,10 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
   }
 
   const validateFacilidad = (facilidad: FacilidadBase): string | null => {
-    if (!facilidad.titulo.trim()) {
-      return "El título no puede estar vacío."
-    }
-    if (!facilidad.descripcion.trim()) {
-      return "La descripción no puede estar vacía."
-    }
-    if (!facilidad.nombreImagen || facilidad.nombreImagen.includes("placeholder.svg")) {
+    if (!facilidad.titulo.trim()) return "El título no puede estar vacío."
+    if (!facilidad.descripcion.trim()) return "La descripción no puede estar vacía."
+    if (!facilidad.nombreImagen || facilidad.nombreImagen.includes("placeholder.svg"))
       return "Por favor selecciona una imagen válida."
-    }
     return null
   }
 
@@ -119,6 +119,7 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
     }
 
     setIsSaving(true)
+    setSavingIndex(index)
 
     try {
       const isNew = typeof facilidad.id !== "number"
@@ -140,19 +141,13 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
     }
 
     setIsSaving(false)
-    // No recargar la página para preservar estado y mostrar mensaje
-     window.location.reload()
+    setSavingIndex(null)
   }
 
   return {
     facilidades: data.facilidades,
     isSaving,
-    validationError,
-    setValidationError,
-    message,
-    setMessage,
-    messageType,
-    setMessageType,
+    savingIndex,
     handleChange,
     handleAdd,
     handleRemove,
@@ -161,5 +156,11 @@ export function useFacilidadesEditor(onChange?: (data: FacilidadesData) => void)
     showConfirmDelete,
     setShowConfirmDelete,
     confirmDelete,
+    validationError,
+    setValidationError,
+    message,
+    setMessage,
+    messageType,
+    setMessageType,
   }
 }
