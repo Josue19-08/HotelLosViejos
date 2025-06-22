@@ -18,10 +18,29 @@ export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void
     handleRemove,
     handleReorder,
     handleSave,
+    showConfirmDelete,
+    setShowConfirmDelete,
+    confirmDelete,
+    validationError,
+    setValidationError,
+    message,
+    messageType,
   } = useFacilidadesEditor(onChange)
 
   return (
     <div className="space-y-6">
+      {/* Mensaje de feedback */}
+      {message && (
+        <div
+          className={`p-4 rounded-md text-sm ${
+            messageType === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -38,7 +57,7 @@ export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void
         </Button>
       </div>
 
-      {/* Si está vacío */}
+      {/* Facilidades vacías */}
       {facilidades.length === 0 ? (
         <div className="text-center py-8 border rounded-md bg-gray-50">
           <p className="text-gray-500">No hay facilidades agregadas</p>
@@ -155,50 +174,85 @@ export function FacilidadesEditor({ onChange }: { onChange?: (data: any) => void
                           disabled={isCurrentSaving}
                         />
                       </div>
-
-                      <Button
-                        type="button"
-                        onClick={() => handleSave(i)}
-                        disabled={isSaving}
-                        className="mt-4 bg-teal-600 hover:bg-teal-700 flex items-center gap-2 text-white"
-                      >
-                        {isCurrentSaving ? (
-                          <>
-                            <svg
-                              className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                                className="opacity-25"
-                              />
-                              <path
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291..."
-                                className="opacity-75"
-                              />
-                            </svg>
-                            Guardando...
-                          </>
-                        ) : (
-                          <>
-                            <Save size={16} />
-                            Guardar cambios
-                          </>
-                        )}
-                      </Button>
                     </div>
                   </div>
+
+                  <Button
+                    type="button"
+                    onClick={() => handleSave(i)}
+                    disabled={isSaving}
+                    className="mt-4 bg-teal-600 hover:bg-teal-700 flex items-center gap-2 text-white"
+                  >
+                    {isCurrentSaving ? (
+                      <>
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            className="opacity-25"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291..."
+                            className="opacity-75"
+                          />
+                        </svg>
+                        Guardando...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Guardar cambios
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* Confirmación de eliminación */}
+      {showConfirmDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded p-6 shadow-md text-center max-w-sm mx-auto">
+            <h2 className="text-lg font-semibold mb-4">
+              ¿Estás seguro que deseas eliminar esta facilidad?
+            </h2>
+            <div className="flex justify-center gap-4">
+              <Button
+                onClick={() => setShowConfirmDelete(false)}
+                variant="outline"
+              >
+                Cancelar
+              </Button>
+              <Button onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
+                Eliminar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error de validación */}
+      {validationError && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded p-6 shadow-md max-w-sm mx-auto text-center">
+            <h3 className="text-lg font-semibold mb-4">Error de validación</h3>
+            <p className="mb-6">{validationError}</p>
+            <Button onClick={() => setValidationError(null)} variant="outline">
+              Cerrar
+            </Button>
+          </div>
         </div>
       )}
     </div>

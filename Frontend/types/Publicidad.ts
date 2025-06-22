@@ -3,8 +3,10 @@ export interface PublicidadBase {
     nombre?: string;
     imagen?: string;
     enlace?: string;
-    titulo?: string;
     descripcion?: string;
+    titulo?: string;
 }
 
 export interface PublicidadRegistro extends Omit<PublicidadBase, "id"> {}
+
+export interface PublicidadActualizacion extends Omit<PublicidadBase, "id"> {}

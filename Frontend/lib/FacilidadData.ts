@@ -44,3 +44,16 @@ export async function registerFacilities(facilidad: FacilidadRegistro): Promise<
     const result = await response.json();
     return result as boolean;
 }
+
+export async function deleteFacility(id: number): Promise<boolean> {
+    const response = await fetch(`${API_URL}/facilidad/${id}`, {
+        method: "DELETE",
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error al eliminar la facilidad: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result as boolean;
+}
