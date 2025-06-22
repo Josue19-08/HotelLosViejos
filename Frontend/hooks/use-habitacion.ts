@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { HabitacionBase, Caracteristica } from "@/types/Habitacion";
-import { getAllHabitaciones, getAllCaracteristicas } from "@/lib/HabitacionData";
+import {
+  getAllHabitaciones,
+  getAllCaracteristicas,
+} from "@/lib/HabitacionData";
 
 export const useHabitacion = () => {
   const [habitaciones, setHabitaciones] = useState<HabitacionBase[]>([]);
@@ -25,7 +28,9 @@ export const useHabitacion = () => {
   const formattedDate = format(currentDate, "dd/MM/yyyy", { locale: es });
 
   const handlePrint = () => {
-    window.print();
+    if (typeof window !== "undefined") {
+      window.print();
+    }
   };
 
   const getEstadoClass = (estado: string) => {
