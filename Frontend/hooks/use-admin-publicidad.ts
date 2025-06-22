@@ -1,81 +1,123 @@
-"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { PublicidadBase } from "@/types/Publicidad";
+import {
+  getAllAds,
+  registerAd,
+  updateAd,
+  deleteAd,
+} from "@/lib/Publicidad";
 
-export interface Publicidad {
-  id: string;
-  titulo: string;
-  imagenUrl: string;
-  linkDestino: string;
-  activa: boolean;
-  fechaCreacion: string;
-  ubicacion: "home" | "reservas" | "facilidades" | "todas";
-}
 
-export function useAdminPublicidad() {
-  const [username] = useState("USUARIO");
-  const [publicidades, setPublicidades] = useState<Publicidad[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [currentPublicidad, setCurrentPublicidad] = useState<Publicidad | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredPublicidades = publicidades.filter(
-    (pub) =>
-      pub.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pub.ubicacion.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+export function usePublicidad() {
+  const [ads, setAds] = useState<PublicidadBase[]>([]);
+  const [newAdNombre, setNewAdNombre] = useState("");
+  const [newAdTitulo, setNewAdTitulo] = useState("");
+  const [newAdDescripcion, setNewAdDescripcion] = useState("");
+  const [newAdImagen, setNewAdImagen] = useState("");
+  const [newAdEnlace, setNewAdEnlace] = useState("");
 
-  const handleAddNew = () => {
-    setCurrentPublicidad(null);
-    setShowForm(true);
-  };
+  const [editedAds, setEditedAds] = useState<{ [id: number]: PublicidadBase }>({});
 
-  const handleEdit = (publicidad: Publicidad) => {
-    setCurrentPublicidad(publicidad);
-    setShowForm(true);
-  };
+  useEffect(() => {
+    const editCopy = ads.reduce((acc, ad) => {
+      acc[ad.id!] = { ...ad };
+      return acc;
+    }, {} as { [id: number]: PublicidadBase });
+    setEditedAds(editCopy);
+  }, [ads]);
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("¿Está seguro que desea eliminar esta publicidad?")) {
-      setPublicidades(publicidades.filter((pub) => pub.id !== id));
+  useEffect(() => {
+    async function fetchPublicidad() {
+      try {
+        const data = await getAllAds();
+        setAds(data);
+      } catch (error) {
+        console.error("Error al obtener publicidad:", error);
+      }
     }
-  };
+    fetchPublicidad();
+  }, []);
 
-  const handleToggleActive = (id: string) => {
-    setPublicidades(publicidades.map((pub) => (pub.id === id ? { ...pub, activa: !pub.activa } : pub)));
-  };
-
-  const handleSave = (publicidad: Publicidad) => {
-    if (currentPublicidad) {
-      setPublicidades(publicidades.map((pub) => (pub.id === publicidad.id ? publicidad : pub)));
-    } else {
-      const newPublicidad = {
-        ...publicidad,
-        id: `pub-${Date.now()}`,
-        fechaCreacion: new Date().toISOString().split("T")[0],
+  const addPublicidad = async () => {
+    try {
+      const nuevaPublicidad: Omit<PublicidadBase, "id"> = {
+        nombre: newAdNombre,
+        titulo: newAdTitulo,
+        descripcion: newAdDescripcion,
+        imagen: newAdImagen,
+        enlace: newAdEnlace,
       };
-      setPublicidades([...publicidades, newPublicidad]);
+      const success = await registerAd(nuevaPublicidad);
+      if (success) {
+        const data = await getAllAds();
+        setAds(data);
+        setNewAdNombre("");
+        setNewAdTitulo("");
+        setNewAdDescripcion("");
+        setNewAdImagen("");
+        setNewAdEnlace("");
+      } else {
+        alert("No se pudo crear la publicidad");
+      }
+    } catch (error) {
+      console.error("Error al crear publicidad:", error);
     }
-    setShowForm(false);
+
   };
 
-  const handleCancel = () => {
-    setShowForm(false);
+  const updatePublicidad = async (publicidadEditada: PublicidadBase) => {
+    try {
+      const payload: PublicidadBase = {
+        id: publicidadEditada.id!,
+        nombre: publicidadEditada.nombre?.trim() || "",
+        titulo: publicidadEditada.titulo?.trim() || "",
+        descripcion: publicidadEditada.descripcion?.trim() || "",
+        imagen: publicidadEditada.imagen?.trim() || "",
+        enlace: publicidadEditada.enlace?.trim() || "",
+      };
+
+      const success = await updateAd(payload);
+      if (success) {
+        const data = await getAllAds();
+        setAds(data);
+      } else {
+        alert("No se pudo actualizar la publicidad");
+      }
+    } catch (error) {
+      console.error("Error al actualizar publicidad:", error);
+    }
+
+  };
+
+  const removePublicidad = async (id: number) => {
+    try {
+      const success = await deleteAd(id);
+      if (success) {
+        setAds(prev => prev.filter(ad => ad.id !== id));
+      } else {
+        alert("No se pudo eliminar la publicidad");
+      }
+    } catch (error) {
+      console.error("Error eliminando publicidad:", error);
+    }
   };
 
   return {
-    username,
-    publicidades,
-    showForm,
-    currentPublicidad,
-    searchTerm,
-    filteredPublicidades,
-    handleAddNew,
-    handleEdit,
-    handleDelete,
-    handleToggleActive,
-    handleSave,
-    handleCancel,
-    setSearchTerm,
+    ads,
+    newAdNombre,
+    setNewAdNombre,
+    newAdTitulo,
+    setNewAdTitulo,
+    newAdDescripcion,
+    setNewAdDescripcion,
+    newAdImagen,
+    setNewAdImagen,
+    newAdEnlace,
+    setNewAdEnlace,
+    addPublicidad,
+    updatePublicidad,
+    removePublicidad,
   };
 }

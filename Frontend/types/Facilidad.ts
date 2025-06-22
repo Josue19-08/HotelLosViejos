@@ -9,3 +9,5 @@ export interface FacilidadBase {
 export interface FacilidadRegistro extends Omit<FacilidadBase, "id"> {}
 
 export interface FacilidadActualizacion extends Omit<FacilidadBase, "id"> {}
+
+export interface FacilidadEliminacion extends Pick<FacilidadBase, "id"> {}
