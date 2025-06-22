@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record ClienteRegistroDTO(
+public record  ClienteRegistroDTO(
 
         @NotNull(message = "{cliente.id.nulo}")
         @Min(value = 1, message = "{cliente.id.mayor1}")
